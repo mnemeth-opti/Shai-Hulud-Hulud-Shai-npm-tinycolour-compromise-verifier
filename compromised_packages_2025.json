@@ -1,0 +1,335 @@
+{
+  "incident_metadata": {
+    "name": "NPM Supply Chain Attack - Extended Package List 2025",
+    "date": "2025-09-16",
+    "cve_reference": "Pending",
+    "github_issue": "Multiple packages compromised",
+    "attack_vector": "Supply chain compromise targeting popular packages",
+    "impact": "Potential malicious code injection, data exfiltration",
+    "severity": "CRITICAL"
+  },
+  
+  "compromised_packages": {
+    "@ctrl/tinycolor": {
+      "compromised_versions": ["4.1.1", "4.1.2"],
+      "safe_version": "4.0.0"
+    },
+    "angulartics2": {
+      "compromised_versions": ["14.1.2"],
+      "safe_version": "14.1.1"
+    },
+    "@ctrl/deluge": {
+      "compromised_versions": ["7.2.2"],
+      "safe_version": "7.2.1"
+    },
+    "@ctrl/golang-template": {
+      "compromised_versions": ["1.4.3"],
+      "safe_version": "1.4.2"
+    },
+    "@ctrl/magnet-link": {
+      "compromised_versions": ["4.0.4"],
+      "safe_version": "4.0.3"
+    },
+    "@ctrl/ngx-codemirror": {
+      "compromised_versions": ["7.0.2"],
+      "safe_version": "7.0.1"
+    },
+    "@ctrl/ngx-csv": {
+      "compromised_versions": ["6.0.2"],
+      "safe_version": "6.0.1"
+    },
+    "@ctrl/ngx-emoji-mart": {
+      "compromised_versions": ["9.2.2"],
+      "safe_version": "9.2.1"
+    },
+    "@ctrl/ngx-rightclick": {
+      "compromised_versions": ["4.0.2"],
+      "safe_version": "4.0.1"
+    },
+    "@ctrl/qbittorrent": {
+      "compromised_versions": ["9.7.2"],
+      "safe_version": "9.7.1"
+    },
+    "@ctrl/react-adsense": {
+      "compromised_versions": ["2.0.2"],
+      "safe_version": "2.0.1"
+    },
+    "@ctrl/shared-torrent": {
+      "compromised_versions": ["6.3.2"],
+      "safe_version": "6.3.1"
+    },
+    "@ctrl/torrent-file": {
+      "compromised_versions": ["4.1.2"],
+      "safe_version": "4.1.1"
+    },
+    "@ctrl/transmission": {
+      "compromised_versions": ["7.3.1"],
+      "safe_version": "7.3.0"
+    },
+    "@ctrl/ts-base32": {
+      "compromised_versions": ["4.0.2"],
+      "safe_version": "4.0.1"
+    },
+    "encounter-playground": {
+      "compromised_versions": ["0.0.5"],
+      "safe_version": "0.0.4"
+    },
+    "json-rules-engine-simplified": {
+      "compromised_versions": ["0.2.4", "0.2.1"],
+      "safe_version": "0.2.0"
+    },
+    "koa2-swagger-ui": {
+      "compromised_versions": ["5.11.2", "5.11.1"],
+      "safe_version": "5.11.0"
+    },
+    "@nativescript-community/gesturehandler": {
+      "compromised_versions": ["2.0.35"],
+      "safe_version": "2.0.34"
+    },
+    "@nativescript-community/sentry": {
+      "compromised_versions": ["4.6.43"],
+      "safe_version": "4.6.42"
+    },
+    "@nativescript-community/text": {
+      "compromised_versions": ["1.6.13"],
+      "safe_version": "1.6.12"
+    },
+    "@nativescript-community/ui-collectionview": {
+      "compromised_versions": ["6.0.6"],
+      "safe_version": "6.0.5"
+    },
+    "@nativescript-community/ui-drawer": {
+      "compromised_versions": ["0.1.30"],
+      "safe_version": "0.1.29"
+    },
+    "@nativescript-community/ui-image": {
+      "compromised_versions": ["4.5.6"],
+      "safe_version": "4.5.5"
+    },
+    "@nativescript-community/ui-material-bottomsheet": {
+      "compromised_versions": ["7.2.72"],
+      "safe_version": "7.2.71"
+    },
+    "@nativescript-community/ui-material-core": {
+      "compromised_versions": ["7.2.76"],
+      "safe_version": "7.2.75"
+    },
+    "@nativescript-community/ui-material-core-tabs": {
+      "compromised_versions": ["7.2.76"],
+      "safe_version": "7.2.75"
+    },
+    "ngx-color": {
+      "compromised_versions": ["10.0.2"],
+      "safe_version": "10.0.1"
+    },
+    "ngx-toastr": {
+      "compromised_versions": ["19.0.2"],
+      "safe_version": "19.0.1"
+    },
+    "ngx-trend": {
+      "compromised_versions": ["8.0.1"],
+      "safe_version": "8.0.0"
+    },
+    "react-complaint-image": {
+      "compromised_versions": ["0.0.35"],
+      "safe_version": "0.0.34"
+    },
+    "react-jsonschema-form-conditionals": {
+      "compromised_versions": ["0.3.21"],
+      "safe_version": "0.3.20"
+    },
+    "react-jsonschema-form-extras": {
+      "compromised_versions": ["1.0.4"],
+      "safe_version": "1.0.3"
+    },
+    "rxnt-authentication": {
+      "compromised_versions": ["0.0.6"],
+      "safe_version": "0.0.5"
+    },
+    "rxnt-healthchecks-nestjs": {
+      "compromised_versions": ["1.0.5"],
+      "safe_version": "1.0.4"
+    },
+    "rxnt-kue": {
+      "compromised_versions": ["1.0.7"],
+      "safe_version": "1.0.6"
+    },
+    "swc-plugin-component-annotate": {
+      "compromised_versions": ["1.9.2"],
+      "safe_version": "1.9.1"
+    },
+    "ts-gaussian": {
+      "compromised_versions": ["3.0.6"],
+      "safe_version": "3.0.5"
+    }
+  },
+  
+  "potentially_compromised_packages": [
+    "@ahmedhfarag/ngx-perfect-scrollbar",
+    "@ahmedhfarag/ngx-virtual-scroller",
+    "@art-ws/common",
+    "@art-ws/config-eslint",
+    "@art-ws/config-ts",
+    "@art-ws/db-context",
+    "@art-ws/di",
+    "@art-ws/di-node",
+    "@art-ws/eslint",
+    "@art-ws/fastify-http-server",
+    "@art-ws/http-server",
+    "@art-ws/openapi",
+    "@art-ws/package-base",
+    "@art-ws/prettier",
+    "@art-ws/slf",
+    "@art-ws/ssl-info",
+    "@art-ws/web-app",
+    "@crowdstrike/commitlint",
+    "@crowdstrike/falcon-shoelace",
+    "@crowdstrike/foundry-js",
+    "@crowdstrike/glide-core",
+    "@crowdstrike/logscale-dashboard",
+    "@crowdstrike/logscale-file-editor",
+    "@crowdstrike/logscale-parser-edit",
+    "@crowdstrike/logscale-search",
+    "@crowdstrike/tailwind-toucan-base",
+    "@hestjs/core",
+    "@hestjs/cqrs",
+    "@hestjs/demo",
+    "@hestjs/eslint-config",
+    "@hestjs/logger",
+    "@hestjs/scalar",
+    "@hestjs/validation",
+    "@nativescript-community/arraybuffers",
+    "@nativescript-community/perms",
+    "@nativescript-community/sqlite",
+    "@nativescript-community/typeorm",
+    "@nativescript-community/ui-document-picker"
+  ],
+  
+  "malicious_indicators": {
+    "domains": [
+      "npmjs.help",
+      "support.npmjs.help",
+      "fake-npm-registry.com"
+    ],
+    "emails": [
+      "support@npmjs.help"
+    ],
+    "urls": [
+      "https://npmjs.help",
+      "http://npmjs.help",
+      "npmjs.help/reset",
+      "npmjs.help/2fa"
+    ],
+    "file_patterns": [
+      "src/index.js",
+      "lib/index.js",
+      "dist/index.js",
+      "build/index.js"
+    ]
+  },
+  
+  "crypto_indicators": [
+    "cryptocurrency",
+    "wallet",
+    "private key",
+    "privatekey",
+    "mnemonic",
+    "seed phrase",
+    "seedphrase",
+    "bitcoin",
+    "ethereum",
+    "crypto",
+    "metamask",
+    "web3",
+    "blockchain",
+    "coinbase",
+    "binance",
+    "ledger",
+    "trezor",
+    "wallet.dat",
+    "keystore",
+    "recovery phrase",
+    "bip39",
+    "hdwallet",
+    "cryptowallet"
+  ],
+  
+  "browser_apis": [
+    "window.crypto",
+    "localStorage",
+    "sessionStorage",
+    "indexedDB",
+    "navigator.clipboard",
+    "document.cookie",
+    "window.ethereum",
+    "web3"
+  ],
+  
+  "suspicious_patterns": [
+    "fetch\\s*\\(",
+    "XMLHttpRequest",
+    "eval\\s*\\(",
+    "Function\\s*\\(",
+    "atob\\s*\\(",
+    "btoa\\s*\\(",
+    "fromCharCode",
+    "\\\\x[0-9a-fA-F]{2}",
+    "\\\\u[0-9a-fA-F]{4}",
+    "String\\.fromCharCode",
+    "unescape\\s*\\(",
+    "decodeURIComponent\\s*\\("
+  ],
+  
+  "remediation": {
+    "immediate_actions": [
+      "Stop all running applications",
+      "Clear npm cache: npm cache clean --force",
+      "Remove node_modules and lock files",
+      "Update to safe package versions",
+      "Reinstall dependencies",
+      "Audit security: npm audit",
+      "Check for unauthorized network connections",
+      "Review application logs for suspicious activity"
+    ],
+    "safe_overrides": {
+      "@ctrl/tinycolor": "4.0.0",
+      "angulartics2": "14.1.1",
+      "@ctrl/deluge": "7.2.1",
+      "@ctrl/golang-template": "1.4.2",
+      "@ctrl/magnet-link": "4.0.3",
+      "@ctrl/ngx-codemirror": "7.0.1",
+      "@ctrl/ngx-csv": "6.0.1",
+      "@ctrl/ngx-emoji-mart": "9.2.1",
+      "@ctrl/ngx-rightclick": "4.0.1",
+      "@ctrl/qbittorrent": "9.7.1",
+      "@ctrl/react-adsense": "2.0.1",
+      "@ctrl/shared-torrent": "6.3.1",
+      "@ctrl/torrent-file": "4.1.1",
+      "@ctrl/transmission": "7.3.0",
+      "@ctrl/ts-base32": "4.0.1",
+      "encounter-playground": "0.0.4",
+      "json-rules-engine-simplified": "0.2.0",
+      "koa2-swagger-ui": "5.11.0",
+      "@nativescript-community/gesturehandler": "2.0.34",
+      "@nativescript-community/sentry": "4.6.42",
+      "@nativescript-community/text": "1.6.12",
+      "@nativescript-community/ui-collectionview": "6.0.5",
+      "@nativescript-community/ui-drawer": "0.1.29",
+      "@nativescript-community/ui-image": "4.5.5",
+      "@nativescript-community/ui-material-bottomsheet": "7.2.71",
+      "@nativescript-community/ui-material-core": "7.2.75",
+      "@nativescript-community/ui-material-core-tabs": "7.2.75",
+      "ngx-color": "10.0.1",
+      "ngx-toastr": "19.0.1",
+      "ngx-trend": "8.0.0",
+      "react-complaint-image": "0.0.34",
+      "react-jsonschema-form-conditionals": "0.3.20",
+      "react-jsonschema-form-extras": "1.0.3",
+      "rxnt-authentication": "0.0.5",
+      "rxnt-healthchecks-nestjs": "1.0.4",
+      "rxnt-kue": "1.0.6",
+      "swc-plugin-component-annotate": "1.9.1",
+      "ts-gaussian": "3.0.5"
+    }
+  }
+}

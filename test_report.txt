@@ -1,0 +1,153 @@
+================================================================================
+NPM PACKAGE COMPROMISE DETECTION REPORT - 2025 EXTENDED
+================================================================================
+Scan completed: 2025-09-16 12:04:34
+Files scanned: 2
+Total findings: 8
+Packages analyzed: 8
+Incident: NPM Supply Chain Attack - Extended Package List 2025
+
+PACKAGE ANALYSIS SUMMARY:
+------------------------------
+Direct dependencies: 8
+Transitive dependencies: 0
+Lock file packages: 0
+Compromised packages found: 5
+Potentially compromised found: 0
+Safe versions found: 0
+
+PACKAGE SOURCES:
+--------------------
+direct_dependencies: 4
+direct_devDependencies: 3
+direct_peerDependencies: 1
+
+SEVERITY SUMMARY:
+--------------------
+CRITICAL: 5
+HIGH: 1
+MEDIUM: 2
+
+DETAILED FINDINGS:
+--------------------
+1. [CRITICAL] Compromised package detected: @ctrl/tinycolor@4.1.2
+   📁 Location: test_sample/package.json
+   package: @ctrl/tinycolor
+   version: 4.1.2
+   normalized_version: 4.1.2
+   📦 Type: dependencies
+   ⚠️  Compromised versions: 4.1.1, 4.1.2
+
+2. [CRITICAL] Compromised package detected: angulartics2@14.1.2
+   📁 Location: test_sample/package.json
+   package: angulartics2
+   version: 14.1.2
+   normalized_version: 14.1.2
+   📦 Type: dependencies
+   ⚠️  Compromised versions: 14.1.2
+
+3. [CRITICAL] Compromised package detected: @ctrl/ngx-codemirror@7.0.2
+   📁 Location: test_sample/package.json
+   package: @ctrl/ngx-codemirror
+   version: 7.0.2
+   normalized_version: 7.0.2
+   📦 Type: devDependencies
+   ⚠️  Compromised versions: 7.0.2
+
+4. [CRITICAL] Compromised package detected: ngx-toastr@19.0.2
+   📁 Location: test_sample/package.json
+   package: ngx-toastr
+   version: 19.0.2
+   normalized_version: 19.0.2
+   📦 Type: devDependencies
+   ⚠️  Compromised versions: 19.0.2
+
+5. [CRITICAL] Compromised package detected: @nativescript-community/sentry@4.6.43
+   📁 Location: test_sample/package.json
+   package: @nativescript-community/sentry
+   version: 4.6.43
+   normalized_version: 4.6.43
+   📦 Type: peerDependencies
+   ⚠️  Compromised versions: 4.6.43
+
+6. [HIGH] Malicious URL detected: npmjs.help
+   📁 Location: test_sample/suspicious_code.js
+   url: npmjs.help
+   context: const config = {
+    // Test malicious URL detection
+    supportUrl: 'https://npmjs.help/support',
+    
+    // Test crypto indicators
+
+7. [MEDIUM] Crypto-related keywords detected: wallet, privatekey, crypto
+   📁 Location: test_sample/suspicious_code.js
+   keywords: ['wallet', 'privatekey', 'crypto']
+
+8. [MEDIUM] Suspicious code patterns detected: 5 patterns
+   📁 Location: test_sample/suspicious_code.js
+   patterns: ['fetch\\s*\\(', 'eval\\s*\\(', 'atob\\s*\\(', 'fromCharCode', 'String\\.fromCharCode']
+
+RECOMMENDATIONS:
+--------------------
+🚨 IMMEDIATE ACTION REQUIRED:
+1. Stop all running applications immediately
+2. Remove or update all compromised packages
+3. Clear npm cache: npm cache clean --force
+4. Remove node_modules and lock files
+5. Update to safe package versions
+6. Reinstall dependencies
+7. Review application logs for suspicious activity
+8. Check for unauthorized network connections
+
+⚠️  HIGH PRIORITY ACTIONS:
+1. Review potentially compromised packages
+2. Verify package authenticity
+3. Consider alternative packages if available
+4. Monitor for updates from package maintainers
+
+SAFE VERSION OVERRIDES (add to package.json):
+  "overrides": {
+    "@ctrl/tinycolor": "4.0.0",
+    "angulartics2": "14.1.1",
+    "@ctrl/deluge": "7.2.1",
+    "@ctrl/golang-template": "1.4.2",
+    "@ctrl/magnet-link": "4.0.3",
+    "@ctrl/ngx-codemirror": "7.0.1",
+    "@ctrl/ngx-csv": "6.0.1",
+    "@ctrl/ngx-emoji-mart": "9.2.1",
+    "@ctrl/ngx-rightclick": "4.0.1",
+    "@ctrl/qbittorrent": "9.7.1",
+    "@ctrl/react-adsense": "2.0.1",
+    "@ctrl/shared-torrent": "6.3.1",
+    "@ctrl/torrent-file": "4.1.1",
+    "@ctrl/transmission": "7.3.0",
+    "@ctrl/ts-base32": "4.0.1",
+    "encounter-playground": "0.0.4",
+    "json-rules-engine-simplified": "0.2.0",
+    "koa2-swagger-ui": "5.11.0",
+    "@nativescript-community/gesturehandler": "2.0.34",
+    "@nativescript-community/sentry": "4.6.42",
+    "@nativescript-community/text": "1.6.12",
+    "@nativescript-community/ui-collectionview": "6.0.5",
+    "@nativescript-community/ui-drawer": "0.1.29",
+    "@nativescript-community/ui-image": "4.5.5",
+    "@nativescript-community/ui-material-bottomsheet": "7.2.71",
+    "@nativescript-community/ui-material-core": "7.2.75",
+    "@nativescript-community/ui-material-core-tabs": "7.2.75",
+    "ngx-color": "10.0.1",
+    "ngx-toastr": "19.0.1",
+    "ngx-trend": "8.0.0",
+    "react-complaint-image": "0.0.34",
+    "react-jsonschema-form-conditionals": "0.3.20",
+    "react-jsonschema-form-extras": "1.0.3",
+    "rxnt-authentication": "0.0.5",
+    "rxnt-healthchecks-nestjs": "1.0.4",
+    "rxnt-kue": "1.0.6",
+    "swc-plugin-component-annotate": "1.9.1",
+    "ts-gaussian": "3.0.5",
+  }
+
+REFERENCE:
+- GitHub Issue: Multiple packages compromised
+- Attack Vector: Supply chain compromise targeting popular packages
+- Impact: Potential malicious code injection, data exfiltration

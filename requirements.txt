@@ -1,0 +1,28 @@
+# Requirements for NPM Package Compromise Detection Tools - 2025 Extended Edition
+# No external dependencies required - uses only Python standard library
+
+# The Python script uses only built-in modules:
+# - json (for parsing package.json and configuration files)
+# - os (for file system operations)
+# - re (for pattern matching)
+# - sys (for system operations and exit codes)
+# - subprocess (for running npm/yarn commands)
+# - pathlib (for path operations)
+# - argparse (for command line argument parsing)
+# - datetime (for timestamps)
+# - tempfile (for temporary files)
+# - shutil (for file operations)
+
+# Optional: If you want to add additional features, you might consider:
+# requests>=2.25.0  # For fetching latest package information from npm registry
+# colorama>=0.4.4   # For cross-platform colored terminal output
+# tabulate>=0.8.9   # For better formatted table output
+
+# For shell script, the following system tools are required:
+# - bash (shell interpreter)
+# - jq (JSON processor) - install with: sudo apt-get install jq (Ubuntu/Debian) or brew install jq (macOS)
+# - find (file search utility) - usually pre-installed
+# - grep (text search utility) - usually pre-installed
+
+# Note: The Python script is designed to work with Python 3.6+ without any external dependencies
+# to ensure maximum compatibility and ease of deployment in security-critical environments.

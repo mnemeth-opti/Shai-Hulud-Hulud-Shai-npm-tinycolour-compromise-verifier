@@ -1,0 +1,19 @@
+{
+  "name": "test-project",
+  "version": "1.0.0",
+  "description": "Test project for compromise detection",
+  "dependencies": {
+    "@ctrl/tinycolor": "4.1.2",
+    "angulartics2": "14.1.2",
+    "express": "4.18.2",
+    "lodash": "4.17.21"
+  },
+  "devDependencies": {
+    "@ctrl/ngx-codemirror": "7.0.2",
+    "ngx-toastr": "19.0.2",
+    "typescript": "5.0.0"
+  },
+  "peerDependencies": {
+    "@nativescript-community/sentry": "4.6.43"
+  }
+}
