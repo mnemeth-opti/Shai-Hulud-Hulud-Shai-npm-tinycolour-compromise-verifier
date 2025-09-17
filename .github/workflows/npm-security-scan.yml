@@ -1,0 +1,168 @@
+name: NPM Package Security Scan
+
+on:
+  # Trigger on pushes to main branch
+  push:
+    branches: [ main, master ]
+  
+  # Trigger on pull requests
+  pull_request:
+    branches: [ main, master ]
+  
+  # Daily scan at 2 AM UTC
+  schedule:
+    - cron: '0 2 * * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  npm-security-scan:
+    name: Scan for Compromised NPM Packages
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install jq
+      run: sudo apt-get update && sudo apt-get install -y jq
+    
+    - name: Download Security Tools
+      run: |
+        # Replace 'your-username/your-repo' with your actual repository
+        REPO_URL="https://raw.githubusercontent.com/your-username/your-repo/main"
+        
+        curl -fsSL "$REPO_URL/quick-check-compromised-packages-2025.sh" -o quick-check.sh
+        curl -fsSL "$REPO_URL/npm_package_compromise_detector_2025.py" -o detector.py
+        curl -fsSL "$REPO_URL/compromised_packages_2025.json" -o compromised_packages.json
+        
+        chmod +x quick-check.sh
+    
+    - name: Quick Security Check
+      id: quick-scan
+      run: |
+        echo "Running quick security scan..."
+        set +e  # Don't fail immediately
+        ./quick-check.sh .
+        SCAN_EXIT_CODE=$?
+        echo "scan_result=$SCAN_EXIT_CODE" >> $GITHUB_OUTPUT
+        exit $SCAN_EXIT_CODE
+      continue-on-error: true
+    
+    - name: Comprehensive Security Analysis
+      if: steps.quick-scan.outputs.scan_result != '0'
+      run: |
+        echo "Running comprehensive security analysis..."
+        python3 detector.py . --full-tree --output security-report.txt
+    
+    - name: Upload Security Report
+      if: steps.quick-scan.outputs.scan_result != '0'
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-report-${{ github.run_number }}
+        path: security-report.txt
+        retention-days: 30
+    
+    - name: Comment on PR (Compromised Packages Found)
+      if: steps.quick-scan.outputs.scan_result != '0' && github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          let reportContent = '';
+          
+          try {
+            reportContent = fs.readFileSync('security-report.txt', 'utf8');
+            // Extract just the summary for the comment
+            const lines = reportContent.split('\n');
+            const summaryStart = lines.findIndex(line => line.includes('SEVERITY SUMMARY'));
+            const summaryEnd = lines.findIndex((line, index) => index > summaryStart && line.includes('DETAILED FINDINGS'));
+            
+            if (summaryStart !== -1 && summaryEnd !== -1) {
+              reportContent = lines.slice(summaryStart, summaryEnd).join('\n');
+            }
+          } catch (error) {
+            reportContent = 'Security report not available. Check the workflow logs.';
+          }
+          
+          const comment = `## 🚨 Security Alert: Compromised NPM Packages Detected
+          
+          **CRITICAL**: This pull request contains or depends on compromised NPM packages.
+          
+          ### Summary
+          \`\`\`
+          ${reportContent}
+          \`\`\`
+          
+          ### Immediate Actions Required:
+          1. 🛑 **DO NOT MERGE** this pull request
+          2. 🧹 Clear npm cache: \`npm cache clean --force\`
+          3. 🗑️ Remove node_modules: \`rm -rf node_modules\`
+          4. 📋 Check the detailed security report in the workflow artifacts
+          5. 🔄 Update to safe package versions
+          6. ✅ Re-run security scan after fixes
+          
+          **Detailed Report**: Download the \`security-report-${{ github.run_number }}\` artifact from this workflow run.
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+    
+    - name: Create Issue (Scheduled Scan)
+      if: steps.quick-scan.outputs.scan_result != '0' && github.event_name == 'schedule'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const title = `🚨 Security Alert: Compromised NPM Packages Detected (${new Date().toISOString().split('T')[0]})`;
+          const body = `## Critical Security Issue
+          
+          Our scheduled security scan has detected compromised NPM packages in the repository.
+          
+          **Scan Date**: ${new Date().toISOString()}
+          **Repository**: ${{ github.repository }}
+          **Branch**: ${{ github.ref_name }}
+          
+          ### Immediate Actions Required:
+          1. Review the detailed security report in workflow artifacts
+          2. Update compromised packages to safe versions
+          3. Clear npm cache and reinstall dependencies
+          4. Verify no malicious code has been executed
+          
+          ### Security Report
+          Download the security report from the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+          
+          **Priority**: CRITICAL
+          **Labels**: security, npm, supply-chain
+          `;
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: title,
+            body: body,
+            labels: ['security', 'critical', 'npm']
+          });
+    
+    - name: Fail Workflow if Compromised Packages Found
+      if: steps.quick-scan.outputs.scan_result != '0'
+      run: |
+        echo "❌ Workflow failed: Compromised NPM packages detected"
+        echo "Check the security report artifact for detailed information"
+        exit 1
+    
+    - name: Success Message
+      if: steps.quick-scan.outputs.scan_result == '0'
+      run: |
+        echo "✅ Security scan passed: No compromised packages detected"
+        echo "Your NPM dependencies appear to be clean"

@@ -1,0 +1,319 @@
+================================================================================
+NPM PACKAGE COMPROMISE DETECTION REPORT - 2025 EXTENDED
+================================================================================
+Scan completed: 2025-09-16 15:46:29
+Files scanned: 686
+Total findings: 47
+Packages analyzed: 1528
+Incident: NPM Supply Chain Attack - Extended Package List 2025
+
+PACKAGE ANALYSIS SUMMARY:
+------------------------------
+Direct dependencies: 3949
+Transitive dependencies: 338
+Lock file packages: 392
+Tree resolved packages: 0
+Compromised packages found: 11
+Potentially compromised found: 0
+Safe versions found: 0
+
+PACKAGE SOURCES:
+--------------------
+direct_dependencies: 314
+direct_devDependencies: 959
+direct_optionalDependencies: 1
+direct_peerDependencies: 9
+lock_file_v2_v3: 152
+transitive_dependency: 93
+
+SEVERITY SUMMARY:
+--------------------
+CRITICAL: 11
+MEDIUM: 35
+ERROR: 1
+
+DETAILED FINDINGS:
+--------------------
+1. [CRITICAL] Compromised package detected: @ctrl/tinycolor@4.1.2
+   📁 Location: test_sample/package.json
+   package: @ctrl/tinycolor
+   version: 4.1.2
+   normalized_version: 4.1.2
+   📦 Type: dependencies
+   ⚠️  Compromised versions: 4.1.1, 4.1.2
+
+2. [CRITICAL] Compromised package detected: angulartics2@14.1.2
+   📁 Location: test_sample/package.json
+   package: angulartics2
+   version: 14.1.2
+   normalized_version: 14.1.2
+   📦 Type: dependencies
+   ⚠️  Compromised versions: 14.1.2
+
+3. [CRITICAL] Compromised package detected: @ctrl/ngx-codemirror@7.0.2
+   📁 Location: test_sample/package.json
+   package: @ctrl/ngx-codemirror
+   version: 7.0.2
+   normalized_version: 7.0.2
+   📦 Type: devDependencies
+   ⚠️  Compromised versions: 7.0.2
+
+4. [CRITICAL] Compromised package detected: ngx-toastr@19.0.2
+   📁 Location: test_sample/package.json
+   package: ngx-toastr
+   version: 19.0.2
+   normalized_version: 19.0.2
+   📦 Type: devDependencies
+   ⚠️  Compromised versions: 19.0.2
+
+5. [CRITICAL] Compromised package detected: @nativescript-community/sentry@4.6.43
+   📁 Location: test_sample/package.json
+   package: @nativescript-community/sentry
+   version: 4.6.43
+   normalized_version: 4.6.43
+   📦 Type: peerDependencies
+   ⚠️  Compromised versions: 4.6.43
+
+6. [CRITICAL] Compromised package in lock file: angulartics2@14.1.2
+   📁 Location: test_deep_dependencies/package-lock.json
+   package: angulartics2
+   version: 14.1.2
+   path: node_modules/angulartics2
+   ⚠️  Compromised versions: 14.1.2
+
+7. [CRITICAL] Compromised package in lock file: @ctrl/tinycolor@4.1.2
+   📁 Location: test_deep_dependencies/package-lock.json
+   package: @ctrl/tinycolor
+   version: 4.1.2
+   path: node_modules/@ctrl/tinycolor
+   ⚠️  Compromised versions: 4.1.1, 4.1.2
+
+8. [CRITICAL] Compromised package in lock file: ngx-toastr@19.0.2
+   📁 Location: test_deep_dependencies/package-lock.json
+   package: ngx-toastr
+   version: 19.0.2
+   path: node_modules/ngx-toastr
+   ⚠️  Compromised versions: 19.0.2
+
+9. [CRITICAL] Compromised package in lock file: ts-gaussian@3.0.6
+   📁 Location: test_deep_dependencies/package-lock.json
+   package: ts-gaussian
+   version: 3.0.6
+   path: node_modules/ts-gaussian
+   ⚠️  Compromised versions: 3.0.6
+
+10. [CRITICAL] Compromised package in lock file: @nativescript-community/sentry@4.6.43
+   📁 Location: test_deep_dependencies/package-lock.json
+   package: @nativescript-community/sentry
+   version: 4.6.43
+   path: node_modules/@nativescript-community/sentry
+   ⚠️  Compromised versions: 4.6.43
+
+11. [CRITICAL] Compromised package in lock file: encounter-playground@0.0.5
+   📁 Location: test_deep_dependencies/package-lock.json
+   package: encounter-playground
+   version: 0.0.5
+   path: node_modules/encounter-playground
+   ⚠️  Compromised versions: 0.0.5
+
+12. [ERROR] Failed to scan source file test_deep_dependencies/node_modules/ipaddr.js: [Errno 21] Is a directory: 'test_deep_dependencies/node_modules/ipaddr.js'
+   📁 Location: test_deep_dependencies/node_modules/ipaddr.js
+
+13. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/content-type/index.js
+   patterns: ['\\\\u[0-9a-fA-F]{4}']
+
+14. [MEDIUM] Suspicious code patterns detected: 4 patterns
+   📁 Location: test_deep_dependencies/node_modules/content-disposition/index.js
+   patterns: ['fromCharCode', '\\\\x[0-9a-fA-F]{2}', '\\\\u[0-9a-fA-F]{4}', 'String\\.fromCharCode']
+
+15. [MEDIUM] Suspicious code patterns detected: 2 patterns
+   📁 Location: test_deep_dependencies/node_modules/depd/index.js
+   patterns: ['Function\\s*\\(', '\\\\x[0-9a-fA-F]{2}']
+
+16. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/express/node_modules/debug/src/node.js
+   patterns: ['\\\\u[0-9a-fA-F]{4}']
+
+17. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/express/lib/response.js
+   patterns: ['\\\\u[0-9a-fA-F]{4}']
+
+18. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/express/lib/request.js
+   patterns: ['XMLHttpRequest']
+
+19. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/express/lib/router/layer.js
+   patterns: ['decodeURIComponent\\s*\\(']
+
+20. [MEDIUM] Suspicious code patterns detected: 2 patterns
+   📁 Location: test_deep_dependencies/node_modules/encodeurl/index.js
+   patterns: ['\\\\x[0-9a-fA-F]{2}', '\\\\u[0-9a-fA-F]{4}']
+
+21. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/function-bind/implementation.js
+   patterns: ['Function\\s*\\(']
+
+22. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/iconv-lite/encodings/dbcs-data.js
+   patterns: ['\\\\u[0-9a-fA-F]{4}']
+
+23. [MEDIUM] Suspicious code patterns detected: 2 patterns
+   📁 Location: test_deep_dependencies/node_modules/iconv-lite/encodings/internal.js
+   patterns: ['fromCharCode', 'String\\.fromCharCode']
+
+24. [MEDIUM] Suspicious code patterns detected: 2 patterns
+   📁 Location: test_deep_dependencies/node_modules/iconv-lite/encodings/utf7.js
+   patterns: ['fromCharCode', 'String\\.fromCharCode']
+
+25. [MEDIUM] Suspicious code patterns detected: 2 patterns
+   📁 Location: test_deep_dependencies/node_modules/iconv-lite/encodings/sbcs-codec.js
+   patterns: ['fromCharCode', 'String\\.fromCharCode']
+
+26. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/iconv-lite/encodings/sbcs-data-generated.js
+   patterns: ['\\\\u[0-9a-fA-F]{4}']
+
+27. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/iconv-lite/lib/index.js
+   patterns: ['\\\\u[0-9a-fA-F]{4}']
+
+28. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/iconv-lite/lib/bom-handling.js
+   patterns: ['\\\\u[0-9a-fA-F]{4}']
+
+29. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/get-intrinsic/index.js
+   patterns: ['Function\\s*\\(']
+
+30. [MEDIUM] Suspicious code patterns detected: 2 patterns
+   📁 Location: test_deep_dependencies/node_modules/qs/test/stringify.js
+   patterns: ['fromCharCode', 'String\\.fromCharCode']
+
+31. [MEDIUM] Suspicious code patterns detected: 5 patterns
+   📁 Location: test_deep_dependencies/node_modules/qs/dist/qs.js
+   patterns: ['Function\\s*\\(', 'fromCharCode', '\\\\x[0-9a-fA-F]{2}', 'String\\.fromCharCode', 'decodeURIComponent\\s*\\(']
+
+32. [MEDIUM] Suspicious code patterns detected: 2 patterns
+   📁 Location: test_deep_dependencies/node_modules/qs/lib/parse.js
+   patterns: ['fromCharCode', 'String\\.fromCharCode']
+
+33. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/qs/lib/utils.js
+   patterns: ['decodeURIComponent\\s*\\(']
+
+34. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/chalk/source/index.js
+   patterns: ['\\\\u[0-9a-fA-F]{4}']
+
+35. [MEDIUM] Suspicious code patterns detected: 4 patterns
+   📁 Location: test_deep_dependencies/node_modules/chalk/source/templates.js
+   patterns: ['fromCharCode', '\\\\u[0-9a-fA-F]{4}', 'String\\.fromCharCode', 'unescape\\s*\\(']
+
+36. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/ansi-regex/index.js
+   patterns: ['\\\\u[0-9a-fA-F]{4}']
+
+37. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/http-errors/index.js
+   patterns: ['Function\\s*\\(']
+
+38. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/ansi-styles/index.js
+   patterns: ['\\\\u[0-9a-fA-F]{4}']
+
+39. [MEDIUM] Crypto-related keywords detected: crypto
+   📁 Location: test_deep_dependencies/node_modules/cookie-signature/index.js
+   keywords: ['crypto']
+
+40. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/body-parser/node_modules/debug/src/node.js
+   patterns: ['\\\\u[0-9a-fA-F]{4}']
+
+41. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/body-parser/lib/types/json.js
+   patterns: ['\\\\x[0-9a-fA-F]{2}']
+
+42. [MEDIUM] Suspicious code patterns detected: 2 patterns
+   📁 Location: test_deep_dependencies/node_modules/cookie/index.js
+   patterns: ['\\\\u[0-9a-fA-F]{4}', 'decodeURIComponent\\s*\\(']
+
+43. [MEDIUM] Crypto-related keywords detected: crypto
+   📁 Location: test_deep_dependencies/node_modules/etag/index.js
+   keywords: ['crypto']
+
+44. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/send/index.js
+   patterns: ['decodeURIComponent\\s*\\(']
+
+45. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/send/node_modules/debug/src/node.js
+   patterns: ['\\\\u[0-9a-fA-F]{4}']
+
+46. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/finalhandler/index.js
+   patterns: ['\\\\x[0-9a-fA-F]{2}']
+
+47. [MEDIUM] Suspicious code patterns detected: 1 patterns
+   📁 Location: test_deep_dependencies/node_modules/finalhandler/node_modules/debug/src/node.js
+   patterns: ['\\\\u[0-9a-fA-F]{4}']
+
+RECOMMENDATIONS:
+--------------------
+🚨 IMMEDIATE ACTION REQUIRED:
+1. Stop all running applications immediately
+2. Remove or update all compromised packages
+3. Clear npm cache: npm cache clean --force
+4. Remove node_modules and lock files
+5. Update to safe package versions
+6. Reinstall dependencies
+7. Review application logs for suspicious activity
+8. Check for unauthorized network connections
+
+SAFE VERSION OVERRIDES (add to package.json):
+  "overrides": {
+    "@ctrl/tinycolor": "4.0.0",
+    "angulartics2": "14.1.1",
+    "@ctrl/deluge": "7.2.1",
+    "@ctrl/golang-template": "1.4.2",
+    "@ctrl/magnet-link": "4.0.3",
+    "@ctrl/ngx-codemirror": "7.0.1",
+    "@ctrl/ngx-csv": "6.0.1",
+    "@ctrl/ngx-emoji-mart": "9.2.1",
+    "@ctrl/ngx-rightclick": "4.0.1",
+    "@ctrl/qbittorrent": "9.7.1",
+    "@ctrl/react-adsense": "2.0.1",
+    "@ctrl/shared-torrent": "6.3.1",
+    "@ctrl/torrent-file": "4.1.1",
+    "@ctrl/transmission": "7.3.0",
+    "@ctrl/ts-base32": "4.0.1",
+    "encounter-playground": "0.0.4",
+    "json-rules-engine-simplified": "0.2.0",
+    "koa2-swagger-ui": "5.11.0",
+    "@nativescript-community/gesturehandler": "2.0.34",
+    "@nativescript-community/sentry": "4.6.42",
+    "@nativescript-community/text": "1.6.12",
+    "@nativescript-community/ui-collectionview": "6.0.5",
+    "@nativescript-community/ui-drawer": "0.1.29",
+    "@nativescript-community/ui-image": "4.5.5",
+    "@nativescript-community/ui-material-bottomsheet": "7.2.71",
+    "@nativescript-community/ui-material-core": "7.2.75",
+    "@nativescript-community/ui-material-core-tabs": "7.2.75",
+    "ngx-color": "10.0.1",
+    "ngx-toastr": "19.0.1",
+    "ngx-trend": "8.0.0",
+    "react-complaint-image": "0.0.34",
+    "react-jsonschema-form-conditionals": "0.3.20",
+    "react-jsonschema-form-extras": "1.0.3",
+    "rxnt-authentication": "0.0.5",
+    "rxnt-healthchecks-nestjs": "1.0.4",
+    "rxnt-kue": "1.0.6",
+    "swc-plugin-component-annotate": "1.9.1",
+    "ts-gaussian": "3.0.5",
+  }
+
+REFERENCE:
+- GitHub Issue: Multiple packages compromised
+- Attack Vector: Supply chain compromise targeting popular packages
+- Impact: Potential malicious code injection, data exfiltration
