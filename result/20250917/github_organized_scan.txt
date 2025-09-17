@@ -1,0 +1,25 @@
+================================================================================
+ENHANCED NPM PACKAGE COMPROMISE DETECTION REPORT WITH PHOENIX INTEGRATION
+================================================================================
+Scan completed: 2025-09-17 16:37:13
+Files scanned: 0
+Total findings: 3
+
+SEVERITY SUMMARY:
+--------------------
+ERROR: 3
+
+DETAILED FINDINGS:
+--------------------
+1. [ERROR] Failed to parse github-pull/20250917/create-react-app/package.json: Expecting value: line 1 column 1 (char 0)
+   📁 Location: github-pull/20250917/create-react-app/package.json
+
+2. [ERROR] Failed to scan lock file github-pull/20250917/create-react-app/package-lock.json: Expecting value: line 1 column 1 (char 0)
+   📁 Location: github-pull/20250917/create-react-app/package-lock.json
+
+3. [ERROR] Failed to parse github-pull/20250917/vue/package.json: Expecting value: line 1 column 1 (char 0)
+   📁 Location: github-pull/20250917/vue/package.json
+
+SCAN MODE:
+---------------
+Light scan mode: NPM files only (via GitHub API)

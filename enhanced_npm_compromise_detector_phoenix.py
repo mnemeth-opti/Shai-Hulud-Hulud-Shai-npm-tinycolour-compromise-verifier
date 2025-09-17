@@ -60,6 +60,12 @@ class EnhancedNPMCompromiseDetectorPhoenix:
         self.github_token = os.getenv('GITHUB_TOKEN')  # Optional GitHub token for higher rate limits
         self.use_embedded_credentials = False
         
+        # Folder organization for GitHub pulls and results
+        self.timestamp = datetime.now().strftime('%Y%m%d')
+        self.github_pull_dir = os.path.join('github-pull', self.timestamp)
+        self.result_dir = os.path.join('result', self.timestamp)
+        self.organize_folders = False
+        
         # 🔐 EMBEDDED CREDENTIALS FOR LOCAL LAPTOP USE
         # Replace with your actual Phoenix Security credentials for personal use
         self.embedded_credentials = {
@@ -464,6 +470,17 @@ import_type = new
     def enable_light_scan(self, enable: bool = True):
         """Enable or disable light scan mode (NPM files only)"""
         self.light_scan_mode = enable
+        
+    def enable_folder_organization(self, enable: bool = True):
+        """Enable or disable organized folder structure for GitHub pulls and results"""
+        self.organize_folders = enable
+        if enable:
+            # Create directories if they don't exist
+            os.makedirs(self.github_pull_dir, exist_ok=True)
+            os.makedirs(self.result_dir, exist_ok=True)
+            print(f"📁 Folder organization enabled:")
+            print(f"   GitHub pulls: {self.github_pull_dir}")
+            print(f"   Results: {self.result_dir}")
         
     def get_repo_url_from_path(self, file_path: str) -> Optional[str]:
         """Extract repository URL from local file path"""
@@ -1042,8 +1059,17 @@ import_type = new
             
         print(f"📁 Found {len(npm_files)} NPM file(s) in {owner}/{repo}")
         
-        # Create temporary directory for downloaded files
-        temp_dir = tempfile.mkdtemp(prefix=f"light_scan_{repo}_")
+        # Create directory for downloaded files
+        if self.organize_folders:
+            # Use organized folder structure
+            repo_dir = os.path.join(self.github_pull_dir, repo)
+            os.makedirs(repo_dir, exist_ok=True)
+            temp_dir = repo_dir
+            cleanup_temp = False  # Don't cleanup organized folders
+        else:
+            # Use temporary directory (original behavior)
+            temp_dir = tempfile.mkdtemp(prefix=f"light_scan_{repo}_")
+            cleanup_temp = True
         
         try:
             # Download and process each NPM file
@@ -1058,11 +1084,14 @@ import_type = new
                         assets.append(asset)
                         
         finally:
-            # Clean up temporary directory
-            try:
-                shutil.rmtree(temp_dir)
-            except Exception as e:
-                print(f"⚠️  Could not clean up temp directory {temp_dir}: {str(e)}")
+            # Clean up temporary directory only if not using organized folders
+            if cleanup_temp:
+                try:
+                    shutil.rmtree(temp_dir)
+                except Exception as e:
+                    print(f"⚠️  Could not clean up temp directory {temp_dir}: {str(e)}")
+            else:
+                print(f"📁 Repository files saved to: {temp_dir}")
                 
         return assets
         
@@ -1297,6 +1326,10 @@ import_type = new
         report_content = '\n'.join(report_lines)
         
         if output_file:
+            # If using organized folders, save to result directory
+            if self.organize_folders and not os.path.isabs(output_file):
+                output_file = os.path.join(self.result_dir, output_file)
+                
             with open(output_file, 'w', encoding='utf-8') as f:
                 f.write(report_content)
             print(f"📄 Report saved to: {output_file}")
@@ -1347,6 +1380,8 @@ def main():
                        help='Enable full dependency tree analysis (slower but comprehensive)')
     parser.add_argument('--light-scan', action='store_true',
                        help='Light scan mode: download only NPM files from repositories (faster, GitHub only)')
+    parser.add_argument('--organize-folders', action='store_true',
+                       help='Organize GitHub pulls in github-pull/YYYYMMDD and results in result/YYYYMMDD')
     
     args = parser.parse_args()
     
@@ -1383,6 +1418,9 @@ def main():
     if args.use_embedded_credentials:
         detector.use_embedded_credentials = True
         print("🔐 Embedded credentials mode enabled")
+        
+    if args.organize_folders:
+        detector.enable_folder_organization(True)
     
     print(f"📁 Target: {os.path.abspath(args.target)}")
     print()

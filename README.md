@@ -153,6 +153,32 @@ export GITHUB_TOKEN=your_github_token_here
 python3 enhanced_npm_compromise_detector_phoenix.py --repo-list repos.txt --light-scan --enable-phoenix
 ```
 
+### **🗂️ Organized Folder Structure (NEW!)**
+
+Perfect for systematic security monitoring and audit trails:
+
+```bash
+# Organize GitHub pulls and results by date
+python3 enhanced_npm_compromise_detector_phoenix.py \
+  --repo-list repos.txt \
+  --light-scan \
+  --organize-folders \
+  --enable-phoenix \
+  --output security_audit.txt
+```
+
+**Creates organized structure:**
+```
+github-pull/20250917/    # Downloaded NPM files by repository
+├── repo1/package.json
+├── repo2/package-lock.json
+└── repo3/yarn.lock
+
+result/20250917/         # All reports and results
+├── security_audit.txt
+└── phoenix_import.log
+```
+
 📖 **[Complete Phoenix Integration Guide](PHOENIX_INTEGRATION_GUIDE.md)**
 
 ---
@@ -600,6 +626,7 @@ jobs:
 - 💻 **[LOCAL_LAPTOP_USAGE_GUIDE.md](LOCAL_LAPTOP_USAGE_GUIDE.md)** - Local laptop usage with embedded credentials
 - 🍦 **[VANILLA_SCRIPT_USAGE_GUIDE.md](VANILLA_SCRIPT_USAGE_GUIDE.md)** - Using without Phoenix integration
 - 🎯 **[LOCAL_USAGE_DEMO.md](LOCAL_USAGE_DEMO.md)** - Complete local setup demo
+- 🗂️ **[ORGANIZED_FOLDERS_GUIDE.md](ORGANIZED_FOLDERS_GUIDE.md)** - GitHub pulls & results organization
 
 ---
 
