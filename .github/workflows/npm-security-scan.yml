@@ -1,4 +1,4 @@
-name: NPM Package Security Scan
+name: NPM Package Security Scan - 2025 Extended (195 Packages)
 
 on:
   # Trigger on pushes to main branch
@@ -18,7 +18,7 @@ on:
 
 jobs:
   npm-security-scan:
-    name: Scan for Compromised NPM Packages
+    name: Scan for 195 Compromised NPM Packages (2025 Extended)
     runs-on: ubuntu-latest
     
     steps:
@@ -94,7 +94,9 @@ jobs:
           
           const comment = `## 🚨 Security Alert: Compromised NPM Packages Detected
           
-          **CRITICAL**: This pull request contains or depends on compromised NPM packages.
+          **CRITICAL**: This pull request contains or depends on compromised NPM packages from our database of **195 confirmed compromised packages**.
+          
+          **🎯 Organizations Affected**: @ctrl, @nativescript-community, @art-ws, @crowdstrike, @operato, @teselagen, @things-factory, and others.
           
           ### Summary
           \`\`\`
@@ -106,10 +108,10 @@ jobs:
           2. 🧹 Clear npm cache: \`npm cache clean --force\`
           3. 🗑️ Remove node_modules: \`rm -rf node_modules\`
           4. 📋 Check the detailed security report in the workflow artifacts
-          5. 🔄 Update to safe package versions
+          5. 🔄 Update to safe package versions (auto-generated in report)
           6. ✅ Re-run security scan after fixes
           
-          **Detailed Report**: Download the \`security-report-${{ github.run_number }}\` artifact from this workflow run.
+          **Detailed Report**: Download the \`security-report-${{ github.run_number }}\` artifact from this workflow run for complete safe version recommendations.
           `;
           
           github.rest.issues.createComment({
@@ -125,22 +127,29 @@ jobs:
       with:
         script: |
           const title = `🚨 Security Alert: Compromised NPM Packages Detected (${new Date().toISOString().split('T')[0]})`;
-          const body = `## Critical Security Issue
+          const body = `## Critical Security Issue - 195 Package Database
           
-          Our scheduled security scan has detected compromised NPM packages in the repository.
+          Our scheduled security scan has detected compromised NPM packages in the repository from our database of **195 confirmed compromised packages**.
           
           **Scan Date**: ${new Date().toISOString()}
           **Repository**: ${{ github.repository }}
           **Branch**: ${{ github.ref_name }}
+          **Coverage**: 195 packages across 11+ major organizations
+          
+          ### Organizations Potentially Affected:
+          - @ctrl, @nativescript-community, @art-ws, @crowdstrike
+          - @operato, @teselagen, @things-factory, @nstudio
+          - Plus 100+ individual packages
           
           ### Immediate Actions Required:
           1. Review the detailed security report in workflow artifacts
-          2. Update compromised packages to safe versions
+          2. Update compromised packages to safe versions (auto-generated recommendations)
           3. Clear npm cache and reinstall dependencies
           4. Verify no malicious code has been executed
+          5. Check for cryptocurrency wallet files and sensitive data exposure
           
           ### Security Report
-          Download the security report from the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+          Download the security report from the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for complete safe version recommendations.
           
           **Priority**: CRITICAL
           **Labels**: security, npm, supply-chain
@@ -165,4 +174,6 @@ jobs:
       if: steps.quick-scan.outputs.scan_result == '0'
       run: |
         echo "✅ Security scan passed: No compromised packages detected"
-        echo "Your NPM dependencies appear to be clean"
+        echo "Your NPM dependencies are clean of all 195 monitored compromised packages"
+        echo "Scanned organizations: @ctrl, @nativescript-community, @art-ws, @crowdstrike, and 7+ others"
+

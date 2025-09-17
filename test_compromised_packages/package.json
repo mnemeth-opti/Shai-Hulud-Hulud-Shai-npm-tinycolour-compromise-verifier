@@ -1,0 +1,14 @@
+{
+  "name": "compromised-packages-test",
+  "version": "1.0.0",
+  "description": "Test project with compromised packages for Phoenix integration testing",
+  "dependencies": {
+    "@ctrl/tinycolor": "4.1.2",
+    "angulartics2": "14.1.2",
+    "debug": "^4.3.4"
+  },
+  "devDependencies": {
+    "@ctrl/deluge": "7.2.1",
+    "ngx-color": "10.0.1"
+  }
+}

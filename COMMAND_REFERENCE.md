@@ -1,4 +1,4 @@
-# 📋 Command Reference - NPM Package Compromise Detection
+# 📋 Command Reference - NPM Package Compromise Detection (195 Packages)
 
 ## 🚀 Quick Commands
 
@@ -245,3 +245,4 @@ curl -O https://raw.githubusercontent.com/your-repo/npm_package_compromise_detec
 ---
 
 **⚡ Remember**: For supply chain attacks, speed is critical. Use the one-liner for immediate checks!
+

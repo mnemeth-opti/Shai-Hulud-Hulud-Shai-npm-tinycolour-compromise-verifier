@@ -1,4 +1,4 @@
-# NPM Package Compromise Detection Tools - 2025 Extended Edition
+# NPM Package Compromise Detection Tools with Phoenix Security Integration - 2025
 
 ## ⚡ Quick Start (30 seconds)
 
@@ -6,22 +6,51 @@
 
 ```bash
 # 1. Make scripts executable
-chmod +x *.sh
+chmod +x *.sh *.py
 
-# 2. Quick security check
+# 2. FASTEST: Enhanced security check with Phoenix + Light Scan
+./enhanced-quick-check-with-phoenix.sh . --enable-phoenix --light-scan
+
+# 3. Or traditional quick check
 ./local-security-check.sh .
 
-# 3. If compromised packages found, get detailed report
-python3 npm_package_compromise_detector_2025.py . --full-tree --output emergency-report.txt
+# 4. If compromised packages found, get detailed report
+python3 enhanced_npm_compromise_detector_phoenix.py . --full-tree --enable-phoenix --output emergency-report.txt
+```
+
+### **⚡ Enterprise Quick Start (Batch Scanning)**
+
+**Scan multiple repositories at once:**
+
+```bash
+# 1. Create repository list
+cat > my_repos.txt << EOF
+https://github.com/your-org/frontend
+https://github.com/your-org/backend
+https://github.com/your-org/mobile-app
+EOF
+
+# 2. Set GitHub token for best performance (optional but recommended)
+export GITHUB_TOKEN=your_github_token_here
+
+# 3. Light scan all repositories (10x faster!)
+python3 enhanced_npm_compromise_detector_phoenix.py --repo-list my_repos.txt --light-scan --enable-phoenix --output batch-security-report.txt
+
+# 4. Or use the integrated script
+./enhanced-quick-check-with-phoenix.sh my_repos.txt --enable-phoenix --light-scan --repo-list
 ```
 
 ### **🎯 What Each Tool Does**
 
 | Tool | Purpose | Speed | Use Case |
 |------|---------|-------|----------|
+| `./enhanced-quick-check-with-phoenix.sh` | **🔗 Integrated scanner + Phoenix API** | ⚡ Fast | Enterprise security, automated reporting |
+| `./enhanced-quick-check-with-phoenix.sh --light-scan` | **🪶 Light batch scanner** | ⚡⚡ Very Fast | **Enterprise batch scanning** |
 | `./local-security-check.sh` | **Quick scanner with nice output** | ⚡ Fast | Daily checks, CI/CD |
 | `./quick-check-compromised-packages-2025.sh` | **Core detection engine** | ⚡ Fast | Direct usage, automation |
-| `python3 npm_package_compromise_detector_2025.py` | **Comprehensive analysis** | 🐌 Thorough | Security audits, reports |
+| `enhanced_npm_compromise_detector_phoenix.py --light-scan` | **🪶 Light Phoenix scanner** | ⚡⚡ Very Fast | **Batch repo scanning, zero storage** |
+| `enhanced_npm_compromise_detector_phoenix.py` | **🔗 Phoenix integrated analysis** | 🐌 Thorough | Enterprise security audits, asset management |
+| `npm_package_compromise_detector_2025.py` | **Comprehensive analysis** | 🐌 Thorough | Security audits, reports |
 
 ### **📊 Understanding Results**
 
@@ -46,65 +75,148 @@ IMMEDIATE ACTIONS REQUIRED:
 
 ---
 
+## 🔗 Phoenix Security Integration (NEW!)
+
+### **Enterprise Asset & Vulnerability Management**
+
+The enhanced tools now integrate with **Phoenix Security** platform to automatically:
+
+- **🏗️ Create BUILD Assets** for each package.json/package-lock.json file
+- **🔍 Generate Security Findings** with proper risk scoring (1.0-10.0)
+- **🔗 Link to Git Repositories** automatically detected from file paths
+- **📊 Centralize Security Data** in your Phoenix Security dashboard
+
+### **Quick Phoenix Setup**
+
+```bash
+# 1. Create Phoenix API configuration template
+python3 enhanced_npm_compromise_detector_phoenix.py --create-config
+
+# 2. Edit .config with YOUR Phoenix API credentials
+cp .config.example .config
+# ⚠️  IMPORTANT: Edit .config file and replace:
+#   - your_phoenix_client_id_here → your actual Phoenix client ID
+#   - your_phoenix_client_secret_here → your actual Phoenix client secret  
+#   - your-phoenix-domain.com → your actual Phoenix domain
+
+# 3. Run with Phoenix integration
+./enhanced-quick-check-with-phoenix.sh . --enable-phoenix
+```
+
+> **🔧 Critical Setup**: The Phoenix integration requires your actual credentials. The example values like `your_phoenix_client_id_here` and `your-phoenix-domain.com` are placeholders that MUST be replaced with your real Phoenix Security platform credentials and domain.
+
+### **Phoenix Risk Scoring**
+
+| Finding Type | Risk Score | Description |
+|--------------|------------|-------------|
+| **Compromised Package** | 10.0 (Critical) | Known compromised version detected |
+| **Potentially Compromised** | 8.0 (High) | Package name in compromise list |
+| **Safe Version** | 3.0 (Info) | Safe version of monitored package |
+
+### **Repository URL Detection**
+
+The tool automatically detects repository URLs from file paths:
+
+- **GitHub Pattern**: `/Documents/GitHub/repo-name/` → `https://github.com/org/repo-name`
+- **Git Remote**: Reads `git remote get-url origin` from `.git` directory  
+- **Manual Override**: Use `--repo-url` parameter
+
+### **Batch Repository Processing**
+
+```bash
+# Create repository list
+cat > repos.txt << EOF
+https://github.com/securityphoenix/SP-MVP1-Frontend
+https://github.com/Security-Phoenix-demo/Shai-Halud-tinycolour-compromise-verifier
+EOF
+
+# Process multiple repositories (full scan)
+python3 enhanced_npm_compromise_detector_phoenix.py --repo-list repos.txt --enable-phoenix
+
+# 🪶 Light scan mode (10x faster - NPM files only!)
+python3 enhanced_npm_compromise_detector_phoenix.py --repo-list repos.txt --enable-phoenix --light-scan
+```
+
+### **🪶 Light Scan Mode (NEW!)**
+
+Perfect for scanning hundreds of repositories quickly:
+
+- ⚡ **10x Faster**: Downloads only NPM files via GitHub API
+- 💾 **Zero Storage**: No repository cloning required
+- 🔄 **Batch Optimized**: Scan entire organizations efficiently
+
+```bash
+# Set GitHub token for higher rate limits (recommended)
+export GITHUB_TOKEN=your_github_token_here
+
+# Light scan repository list
+python3 enhanced_npm_compromise_detector_phoenix.py --repo-list repos.txt --light-scan --enable-phoenix
+```
+
+### **🗂️ Organized Folder Structure (NEW!)**
+
+Perfect for systematic security monitoring and audit trails:
+
+```bash
+# Organize GitHub pulls and results by date
+python3 enhanced_npm_compromise_detector_phoenix.py \
+  --repo-list repos.txt \
+  --light-scan \
+  --organize-folders \
+  --enable-phoenix \
+  --output security_audit.txt
+```
+
+**Creates organized structure:**
+```
+github-pull/20250917/    # Downloaded NPM files by repository
+├── repo1/package.json
+├── repo2/package-lock.json
+└── repo3/yarn.lock
+
+result/20250917/         # All reports and results
+├── security_audit.txt
+└── phoenix_import.log
+```
+
+📖 **[Complete Phoenix Integration Guide](PHOENIX_INTEGRATION_GUIDE.md)**
+
+---
+
 ## Overview
 
-This repository contains comprehensive security tools to detect compromised NPM packages from the 2025 supply chain attack affecting multiple popular packages including `@ctrl/*`, `@nativescript-community/*`, and many others.
+This repository contains comprehensive security tools to detect **195 confirmed compromised NPM packages** from the 2025 supply chain attack affecting multiple organizations including `@ctrl/*`, `@nativescript-community/*`, `@art-ws/*`, `@crowdstrike/*`, `@operato/*`, `@teselagen/*`, `@things-factory/*`, and many others.
 
 ## ⚠️ Critical Security Alert
 
 **IMMEDIATE ACTION REQUIRED** if any of these packages are detected in your project:
 
-### Confirmed Compromised Packages with Specific Versions:
-- `@ctrl/tinycolor@4.1.1, 4.1.2`
-- `angulartics2@14.1.2`
-- `@ctrl/deluge@7.2.2`
-- `@ctrl/golang-template@1.4.3`
-- `@ctrl/magnet-link@4.0.4`
-- `@ctrl/ngx-codemirror@7.0.2`
-- `@ctrl/ngx-csv@6.0.2`
-- `@ctrl/ngx-emoji-mart@9.2.2`
-- `@ctrl/ngx-rightclick@4.0.2`
-- `@ctrl/qbittorrent@9.7.2`
-- `@ctrl/react-adsense@2.0.2`
-- `@ctrl/shared-torrent@6.3.2`
-- `@ctrl/torrent-file@4.1.2`
-- `@ctrl/transmission@7.3.1`
-- `@ctrl/ts-base32@4.0.2`
-- `encounter-playground@0.0.5`
-- `json-rules-engine-simplified@0.2.4, 0.2.1`
-- `koa2-swagger-ui@5.11.2, 5.11.1`
-- `@nativescript-community/gesturehandler@2.0.35`
-- `@nativescript-community/sentry@4.6.43`
-- `@nativescript-community/text@1.6.13`
-- `@nativescript-community/ui-collectionview@6.0.6`
-- `@nativescript-community/ui-drawer@0.1.30`
-- `@nativescript-community/ui-image@4.5.6`
-- `@nativescript-community/ui-material-bottomsheet@7.2.72`
-- `@nativescript-community/ui-material-core@7.2.76`
-- `@nativescript-community/ui-material-core-tabs@7.2.76`
-- `ngx-color@10.0.2`
-- `ngx-toastr@19.0.2`
-- `ngx-trend@8.0.1`
-- `react-complaint-image@0.0.35`
-- `react-jsonschema-form-conditionals@0.3.21`
-- `react-jsonschema-form-extras@1.0.4`
-- `rxnt-authentication@0.0.6`
-- `rxnt-healthchecks-nestjs@1.0.5`
-- `rxnt-kue@1.0.7`
-- `swc-plugin-component-annotate@1.9.2`
-- `ts-gaussian@3.0.6`
+### 🚨 **195 Confirmed Compromised Packages** with Specific Versions
 
-### Potentially Compromised Packages (any version):
-- `@ahmedhfarag/ngx-perfect-scrollbar`
-- `@ahmedhfarag/ngx-virtual-scroller`
-- `@art-ws/*` (all packages)
-- `@crowdstrike/*` (all packages)
-- `@hestjs/*` (all packages)
-- `@nativescript-community/arraybuffers`
-- `@nativescript-community/perms`
-- `@nativescript-community/sqlite`
-- `@nativescript-community/typeorm`
-- `@nativescript-community/ui-document-picker`
+**⚠️ CRITICAL ORGANIZATIONS AFFECTED:**
+- **@ctrl** - 15+ packages compromised
+- **@nativescript-community** - 25+ packages compromised  
+- **@art-ws** - 15+ packages compromised
+- **@crowdstrike** - 10+ packages compromised
+- **@operato** - 15+ packages compromised
+- **@teselagen** - 10+ packages compromised
+- **@things-factory** - 8+ packages compromised
+- **@nstudio** - 8+ packages compromised
+- **Plus 100+ individual packages from various maintainers**
+
+#### **Key Compromised Packages (Sample):**
+- `@ctrl/tinycolor@4.1.1, 4.1.2`
+- `@ahmedhfarag/ngx-perfect-scrollbar@20.0.20`
+- `@art-ws/common@2.0.28`
+- `@crowdstrike/commitlint@8.1.1, 8.1.2`
+- `@operato/board@9.0.36-9.0.46` (multiple versions)
+- `@nativescript-community/text@1.6.9-1.6.13` (multiple versions)
+- `angulartics2@14.1.1, 14.1.2`
+- `ngx-bootstrap@18.1.4, 19.0.3-19.0.4, 20.0.3-20.0.5`
+- `ts-gaussian@3.0.5, 3.0.6`
+- `encounter-playground@0.0.2-0.0.5` (multiple versions)
+
+> **📋 Complete List**: All 195 packages with specific compromised versions are detected by our tools. Run the scanner for the complete detection coverage.
 
 ## 🚨 Emergency Response (If Compromised Packages Found)
 
@@ -253,51 +365,27 @@ rm -f package-lock.json yarn.lock
 ```
 
 ### 3. **Update Package Versions**
-Add these safe version overrides to your `package.json`:
+
+**🎯 Automatic Safe Version Detection**: The Python scanner generates safe version recommendations automatically. For manual updates, here are key examples:
 
 ```json
 {
   "overrides": {
-    "@ctrl/tinycolor": "4.0.0",
-    "angulartics2": "14.1.1",
-    "@ctrl/deluge": "7.2.1",
-    "@ctrl/golang-template": "1.4.2",
-    "@ctrl/magnet-link": "4.0.3",
-    "@ctrl/ngx-codemirror": "7.0.1",
-    "@ctrl/ngx-csv": "6.0.1",
-    "@ctrl/ngx-emoji-mart": "9.2.1",
-    "@ctrl/ngx-rightclick": "4.0.1",
-    "@ctrl/qbittorrent": "9.7.1",
-    "@ctrl/react-adsense": "2.0.1",
-    "@ctrl/shared-torrent": "6.3.1",
-    "@ctrl/torrent-file": "4.1.1",
-    "@ctrl/transmission": "7.3.0",
-    "@ctrl/ts-base32": "4.0.1",
-    "encounter-playground": "0.0.4",
-    "json-rules-engine-simplified": "0.2.0",
-    "koa2-swagger-ui": "5.11.0",
-    "@nativescript-community/gesturehandler": "2.0.34",
-    "@nativescript-community/sentry": "4.6.42",
-    "@nativescript-community/text": "1.6.12",
-    "@nativescript-community/ui-collectionview": "6.0.5",
-    "@nativescript-community/ui-drawer": "0.1.29",
-    "@nativescript-community/ui-image": "4.5.5",
-    "@nativescript-community/ui-material-bottomsheet": "7.2.71",
-    "@nativescript-community/ui-material-core": "7.2.75",
-    "@nativescript-community/ui-material-core-tabs": "7.2.75",
-    "ngx-color": "10.0.1",
-    "ngx-toastr": "19.0.1",
-    "ngx-trend": "8.0.0",
-    "react-complaint-image": "0.0.34",
-    "react-jsonschema-form-conditionals": "0.3.20",
-    "react-jsonschema-form-extras": "1.0.3",
-    "rxnt-authentication": "0.0.5",
-    "rxnt-healthchecks-nestjs": "1.0.4",
-    "rxnt-kue": "1.0.6",
-    "swc-plugin-component-annotate": "1.9.1",
-    "ts-gaussian": "3.0.5"
+    "@ctrl/tinycolor": "4.1.0",
+    "@ahmedhfarag/ngx-perfect-scrollbar": "20.0.19",
+    "@art-ws/common": "2.0.27",
+    "@crowdstrike/commitlint": "8.1.0",
+    "@nativescript-community/text": "1.6.8",
+    "angulartics2": "14.1.0",
+    "ngx-color": "10.0.0",
+    "ngx-toastr": "19.0.0",
+    "ts-gaussian": "3.0.4",
+    "encounter-playground": "0.0.1"
   }
 }
+```
+
+> **💡 Pro Tip**: Run `python3 npm_package_compromise_detector_2025.py . --output report.txt` to get **complete safe version recommendations** for all 195 packages automatically generated in the report.
 ```
 
 ### 4. **Reinstall and Audit**
@@ -381,9 +469,10 @@ python3 npm_package_compromise_detector_2025.py test_deep_dependencies --full-tr
 ```
 
 ### **Expected Results:**
-- **test_sample**: Should detect 5+ compromised packages and malicious patterns
+- **test_sample**: Should detect 5+ compromised packages and malicious patterns from 195 total monitored packages
 - **test_deep_dependencies**: Should detect compromised packages in nested dependencies
 - **clean_test**: Should show clean results with exit code 0
+- **Coverage**: Scanner monitors **195 confirmed compromised packages** across **11+ major organizations**
 
 ### **Performance Benchmarks:**
 - Shell script: ~1-2 seconds for typical projects
@@ -475,9 +564,69 @@ If you see compromised packages:
 - Save reports with timestamps for tracking
 - Integrate into CI/CD for automated protection
 
+### **🏢 Enterprise-Scale Examples**
+
+**Scan entire organization (hundreds of repositories):**
+```bash
+# 1. Generate repository list from GitHub API
+curl -H "Authorization: token $GITHUB_TOKEN" \
+     "https://api.github.com/orgs/your-org/repos?per_page=100&type=all" | \
+     jq -r '.[].clone_url' > org_repos.txt
+
+# 2. Light scan all repositories with Phoenix integration
+python3 enhanced_npm_compromise_detector_phoenix.py \
+  --repo-list org_repos.txt \
+  --light-scan \
+  --enable-phoenix \
+  --output "org_security_scan_$(date +%Y%m%d).txt"
+
+# 3. Or use the integrated script for complete workflow
+./enhanced-quick-check-with-phoenix.sh org_repos.txt \
+  --repo-list --light-scan --enable-phoenix
+```
+
+**CI/CD Pipeline Integration:**
+```yaml
+# .github/workflows/npm-security-light-scan.yml
+name: NPM Security Light Scan
+on: 
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM
+  workflow_dispatch:
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Light Scan NPM Security
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # ⚠️  Replace with your actual Phoenix Security credentials
+          PHOENIX_CLIENT_ID: ${{ secrets.PHOENIX_CLIENT_ID }}
+          PHOENIX_CLIENT_SECRET: ${{ secrets.PHOENIX_CLIENT_SECRET }}
+          PHOENIX_API_URL: ${{ secrets.PHOENIX_API_URL }}  # Your Phoenix domain API endpoint
+        run: |
+          # Create repo list for organization
+          echo "${{ github.repository_url }}" > current_repo.txt
+          
+          # Run light scan with Phoenix integration
+          python3 enhanced_npm_compromise_detector_phoenix.py \
+            --repo-list current_repo.txt \
+            --light-scan \
+            --enable-phoenix \
+            --quiet
+```
+
 ### **📖 Additional Resources**
 - 📘 **[QUICK_START.md](QUICK_START.md)** - Comprehensive usage guide with GitHub Actions
 - 📄 **[COMMAND_REFERENCE.md](COMMAND_REFERENCE.md)** - Quick command reference card
+- 🔗 **[PHOENIX_INTEGRATION_GUIDE.md](PHOENIX_INTEGRATION_GUIDE.md)** - Complete Phoenix integration guide
+- 🔧 **[PHOENIX_CREDENTIALS_SETUP.md](PHOENIX_CREDENTIALS_SETUP.md)** - Step-by-step credentials configuration
+- 💻 **[LOCAL_LAPTOP_USAGE_GUIDE.md](LOCAL_LAPTOP_USAGE_GUIDE.md)** - Local laptop usage with embedded credentials
+- 🍦 **[VANILLA_SCRIPT_USAGE_GUIDE.md](VANILLA_SCRIPT_USAGE_GUIDE.md)** - Using without Phoenix integration
+- 🎯 **[LOCAL_USAGE_DEMO.md](LOCAL_USAGE_DEMO.md)** - Complete local setup demo
+- 🗂️ **[ORGANIZED_FOLDERS_GUIDE.md](ORGANIZED_FOLDERS_GUIDE.md)** - GitHub pulls & results organization
 
 ---
 

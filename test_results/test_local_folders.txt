@@ -1,0 +1,3 @@
+# Test Local Folders List
+./test_sample
+./test_deep_dependencies

@@ -71,19 +71,33 @@ class NPMCompromiseDetector2025:
     def _load_default_data(self):
         """Load default compromise data if config file is not available"""
         self.compromised_packages = {
-            "@ctrl/tinycolor": {"compromised_versions": ["4.1.1", "4.1.2"], "safe_version": "4.0.0"},
-            "angulartics2": {"compromised_versions": ["14.1.2"], "safe_version": "14.1.1"},
-            "@ctrl/deluge": {"compromised_versions": ["7.2.2"], "safe_version": "7.2.1"},
+            "@ctrl/tinycolor": {"compromised_versions": ["4.1.1", "4.1.2"], "safe_version": "4.1.0"},
+            "angulartics2": {"compromised_versions": ["14.1.1", "14.1.2"], "safe_version": "14.1.0"},
+            "@ctrl/deluge": {"compromised_versions": ["7.2.1", "7.2.2"], "safe_version": "7.2.0"},
+            "@ahmedhfarag/ngx-perfect-scrollbar": {"compromised_versions": ["20.0.20"], "safe_version": "20.0.19"},
+            "@art-ws/common": {"compromised_versions": ["2.0.28"], "safe_version": "2.0.27"},
+            "@crowdstrike/commitlint": {"compromised_versions": ["8.1.1", "8.1.2"], "safe_version": "8.1.0"},
+            "@nativescript-community/text": {"compromised_versions": ["1.6.9", "1.6.10", "1.6.11", "1.6.12", "1.6.13"], "safe_version": "1.6.8"},
+            "ngx-color": {"compromised_versions": ["10.0.1", "10.0.2"], "safe_version": "10.0.0"},
+            "ts-gaussian": {"compromised_versions": ["3.0.5", "3.0.6"], "safe_version": "3.0.4"},
+            "encounter-playground": {"compromised_versions": ["0.0.2", "0.0.3", "0.0.4", "0.0.5"], "safe_version": "0.0.1"},
         }
-        self.potentially_compromised = set([
-            "@ahmedhfarag/ngx-perfect-scrollbar",
-            "@ahmedhfarag/ngx-virtual-scroller",
-            "@art-ws/common"
-        ])
+        self.potentially_compromised = set([])  # All packages now have specific compromised versions
         self.malicious_urls = ["npmjs.help", "support@npmjs.help"]
-        self.crypto_indicators = ["cryptocurrency", "wallet", "private key", "bitcoin", "ethereum"]
+        self.crypto_indicators = ["cryptocurrency", "wallet", "private key", "bitcoin", "ethereum", "metamask", "web3", "blockchain"]
         self.suspicious_patterns = []
-        self.safe_overrides = {}
+        self.safe_overrides = {
+            "@ctrl/tinycolor": "4.1.0",
+            "angulartics2": "14.1.0",
+            "@ctrl/deluge": "7.2.0",
+            "@ahmedhfarag/ngx-perfect-scrollbar": "20.0.19",
+            "@art-ws/common": "2.0.27",
+            "@crowdstrike/commitlint": "8.1.0",
+            "@nativescript-community/text": "1.6.8",
+            "ngx-color": "10.0.0",
+            "ts-gaussian": "3.0.4",
+            "encounter-playground": "0.0.1"
+        }
         
     def log_finding(self, severity: str, message: str, file_path: str = None, details: Dict = None):
         """Log a security finding"""
@@ -966,8 +980,8 @@ def main():
     
     args = parser.parse_args()
     
-    print("🔍 NPM Package Compromise Detector 2025 - Extended Edition")
-    print("=" * 60)
+    print("🔍 NPM Package Compromise Detector 2025 - Extended Edition - UPDATED")
+    print("=" * 70)
     
     detector = NPMCompromiseDetector2025(config_file=args.config)
     

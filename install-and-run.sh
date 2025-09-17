@@ -23,8 +23,8 @@ cleanup() {
 }
 trap cleanup EXIT
 
-echo -e "${BLUE}🔍 NPM Package Compromise Detection - Quick Installer${NC}"
-echo -e "${BLUE}===================================================${NC}"
+echo -e "${BLUE}🔍 NPM Package Compromise Detection - Quick Installer (195 Packages)${NC}"
+echo -e "${BLUE}================================================================${NC}"
 echo
 
 # Check prerequisites
