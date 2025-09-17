@@ -1,4 +1,4 @@
-# 🚀 Usage Guide - NPM Package Compromise Detection
+# 🚀 Usage Guide - NPM Package Compromise Detection (195 Packages)
 
 ## ❌ **The Error You Encountered**
 

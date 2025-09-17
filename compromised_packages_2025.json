@@ -1,102 +1,240 @@
 {
   "incident_metadata": {
-    "name": "NPM Supply Chain Attack - Extended Package List 2025",
-    "date": "2025-09-16",
-    "cve_reference": "Pending",
-    "github_issue": "Multiple packages compromised",
-    "attack_vector": "Supply chain compromise targeting popular packages",
-    "impact": "Potential malicious code injection, data exfiltration",
-    "severity": "CRITICAL"
+    "name": "NPM Supply Chain Attack - Extended Package List 2025 - UPDATED",
+    "date": "2025-09-17",
+    "cve_reference": "Multiple CVEs pending",
+    "github_issue": "Multiple packages compromised - Comprehensive list",
+    "attack_vector": "Supply chain compromise targeting popular packages across multiple organizations",
+    "impact": "Potential malicious code injection, data exfiltration, crypto wallet theft",
+    "severity": "CRITICAL",
+    "total_packages": 200,
+    "organizations_affected": ["@ctrl", "@nativescript-community", "@art-ws", "@crowdstrike", "@hestjs", "@operato", "@teselagen", "@things-factory", "@nstudio", "@tnf-dev", "@yoobic"]
   },
   
   "compromised_packages": {
-    "@ctrl/tinycolor": {
-      "compromised_versions": ["4.1.1", "4.1.2"],
-      "safe_version": "4.0.0"
+    "@ahmedhfarag/ngx-perfect-scrollbar": {
+      "compromised_versions": ["20.0.20"],
+      "safe_version": "20.0.19"
     },
-    "angulartics2": {
-      "compromised_versions": ["14.1.2"],
-      "safe_version": "14.1.1"
-    },
-    "@ctrl/deluge": {
-      "compromised_versions": ["7.2.2"],
-      "safe_version": "7.2.1"
-    },
-    "@ctrl/golang-template": {
-      "compromised_versions": ["1.4.3"],
-      "safe_version": "1.4.2"
-    },
-    "@ctrl/magnet-link": {
+    "@ahmedhfarag/ngx-virtual-scroller": {
       "compromised_versions": ["4.0.4"],
       "safe_version": "4.0.3"
     },
+    "@art-ws/common": {
+      "compromised_versions": ["2.0.28"],
+      "safe_version": "2.0.27"
+    },
+    "@art-ws/config-eslint": {
+      "compromised_versions": ["2.0.4", "2.0.5"],
+      "safe_version": "2.0.3"
+    },
+    "@art-ws/config-ts": {
+      "compromised_versions": ["2.0.7", "2.0.8"],
+      "safe_version": "2.0.6"
+    },
+    "@art-ws/db-context": {
+      "compromised_versions": ["2.0.24"],
+      "safe_version": "2.0.23"
+    },
+    "@art-ws/di-node": {
+      "compromised_versions": ["2.0.13"],
+      "safe_version": "2.0.12"
+    },
+    "@art-ws/di": {
+      "compromised_versions": ["2.0.28", "2.0.32"],
+      "safe_version": "2.0.27"
+    },
+    "@art-ws/eslint": {
+      "compromised_versions": ["1.0.5", "1.0.6"],
+      "safe_version": "1.0.4"
+    },
+    "@art-ws/fastify-http-server": {
+      "compromised_versions": ["2.0.24", "2.0.27"],
+      "safe_version": "2.0.23"
+    },
+    "@art-ws/http-server": {
+      "compromised_versions": ["2.0.21", "2.0.25"],
+      "safe_version": "2.0.20"
+    },
+    "@art-ws/openapi": {
+      "compromised_versions": ["0.1.12", "0.1.9"],
+      "safe_version": "0.1.8"
+    },
+    "@art-ws/package-base": {
+      "compromised_versions": ["1.0.5", "1.0.6"],
+      "safe_version": "1.0.4"
+    },
+    "@art-ws/prettier": {
+      "compromised_versions": ["1.0.5", "1.0.6"],
+      "safe_version": "1.0.4"
+    },
+    "@art-ws/slf": {
+      "compromised_versions": ["2.0.15", "2.0.22"],
+      "safe_version": "2.0.14"
+    },
+    "@art-ws/ssl-info": {
+      "compromised_versions": ["1.0.10", "1.0.9"],
+      "safe_version": "1.0.8"
+    },
+    "@art-ws/web-app": {
+      "compromised_versions": ["1.0.3", "1.0.4"],
+      "safe_version": "1.0.2"
+    },
+    "@crowdstrike/commitlint": {
+      "compromised_versions": ["8.1.1", "8.1.2"],
+      "safe_version": "8.1.0"
+    },
+    "@crowdstrike/falcon-shoelace": {
+      "compromised_versions": ["0.4.1", "0.4.2"],
+      "safe_version": "0.4.0"
+    },
+    "@crowdstrike/foundry-js": {
+      "compromised_versions": ["0.19.1", "0.19.2"],
+      "safe_version": "0.19.0"
+    },
+    "@crowdstrike/glide-core": {
+      "compromised_versions": ["0.34.2", "0.34.3"],
+      "safe_version": "0.34.1"
+    },
+    "@crowdstrike/logscale-dashboard": {
+      "compromised_versions": ["1.205.1", "1.205.2"],
+      "safe_version": "1.205.0"
+    },
+    "@crowdstrike/logscale-file-editor": {
+      "compromised_versions": ["1.205.1", "1.205.2"],
+      "safe_version": "1.205.0"
+    },
+    "@crowdstrike/logscale-parser-edit": {
+      "compromised_versions": ["1.205.1", "1.205.2"],
+      "safe_version": "1.205.0"
+    },
+    "@crowdstrike/logscale-search": {
+      "compromised_versions": ["1.205.1", "1.205.2"],
+      "safe_version": "1.205.0"
+    },
+    "@crowdstrike/tailwind-toucan-base": {
+      "compromised_versions": ["5.0.1", "5.0.2"],
+      "safe_version": "5.0.0"
+    },
+    "@ctrl/deluge": {
+      "compromised_versions": ["7.2.1", "7.2.2"],
+      "safe_version": "7.2.0"
+    },
+    "@ctrl/golang-template": {
+      "compromised_versions": ["1.4.2", "1.4.3"],
+      "safe_version": "1.4.1"
+    },
+    "@ctrl/magnet-link": {
+      "compromised_versions": ["4.0.3", "4.0.4"],
+      "safe_version": "4.0.2"
+    },
     "@ctrl/ngx-codemirror": {
-      "compromised_versions": ["7.0.2"],
-      "safe_version": "7.0.1"
+      "compromised_versions": ["7.0.1", "7.0.2"],
+      "safe_version": "7.0.0"
     },
     "@ctrl/ngx-csv": {
-      "compromised_versions": ["6.0.2"],
-      "safe_version": "6.0.1"
+      "compromised_versions": ["6.0.1", "6.0.2"],
+      "safe_version": "6.0.0"
     },
     "@ctrl/ngx-emoji-mart": {
-      "compromised_versions": ["9.2.2"],
-      "safe_version": "9.2.1"
+      "compromised_versions": ["9.2.1", "9.2.2"],
+      "safe_version": "9.2.0"
     },
     "@ctrl/ngx-rightclick": {
-      "compromised_versions": ["4.0.2"],
-      "safe_version": "4.0.1"
+      "compromised_versions": ["4.0.1", "4.0.2"],
+      "safe_version": "4.0.0"
     },
     "@ctrl/qbittorrent": {
-      "compromised_versions": ["9.7.2"],
-      "safe_version": "9.7.1"
+      "compromised_versions": ["9.7.1", "9.7.2"],
+      "safe_version": "9.7.0"
     },
     "@ctrl/react-adsense": {
-      "compromised_versions": ["2.0.2"],
-      "safe_version": "2.0.1"
+      "compromised_versions": ["2.0.1", "2.0.2"],
+      "safe_version": "2.0.0"
     },
     "@ctrl/shared-torrent": {
-      "compromised_versions": ["6.3.2"],
-      "safe_version": "6.3.1"
+      "compromised_versions": ["6.3.1", "6.3.2"],
+      "safe_version": "6.3.0"
+    },
+    "@ctrl/tinycolor": {
+      "compromised_versions": ["4.1.1", "4.1.2"],
+      "safe_version": "4.1.0"
     },
     "@ctrl/torrent-file": {
-      "compromised_versions": ["4.1.2"],
-      "safe_version": "4.1.1"
+      "compromised_versions": ["4.1.1", "4.1.2"],
+      "safe_version": "4.1.0"
     },
     "@ctrl/transmission": {
       "compromised_versions": ["7.3.1"],
       "safe_version": "7.3.0"
     },
     "@ctrl/ts-base32": {
-      "compromised_versions": ["4.0.2"],
-      "safe_version": "4.0.1"
+      "compromised_versions": ["4.0.1", "4.0.2"],
+      "safe_version": "4.0.0"
     },
-    "encounter-playground": {
-      "compromised_versions": ["0.0.5"],
-      "safe_version": "0.0.4"
-    },
-    "json-rules-engine-simplified": {
-      "compromised_versions": ["0.2.4", "0.2.1"],
+    "@hestjs/core": {
+      "compromised_versions": ["0.2.1"],
       "safe_version": "0.2.0"
     },
-    "koa2-swagger-ui": {
-      "compromised_versions": ["5.11.2", "5.11.1"],
-      "safe_version": "5.11.0"
+    "@hestjs/cqrs": {
+      "compromised_versions": ["0.1.6"],
+      "safe_version": "0.1.5"
+    },
+    "@hestjs/demo": {
+      "compromised_versions": ["0.1.2"],
+      "safe_version": "0.1.1"
+    },
+    "@hestjs/eslint-config": {
+      "compromised_versions": ["0.1.2"],
+      "safe_version": "0.1.1"
+    },
+    "@hestjs/logger": {
+      "compromised_versions": ["0.1.6"],
+      "safe_version": "0.1.5"
+    },
+    "@hestjs/scalar": {
+      "compromised_versions": ["0.1.7"],
+      "safe_version": "0.1.6"
+    },
+    "@hestjs/validation": {
+      "compromised_versions": ["0.1.6"],
+      "safe_version": "0.1.5"
+    },
+    "@nativescript-community/arraybuffers": {
+      "compromised_versions": ["1.1.6", "1.1.7", "1.1.8"],
+      "safe_version": "1.1.5"
     },
     "@nativescript-community/gesturehandler": {
       "compromised_versions": ["2.0.35"],
       "safe_version": "2.0.34"
     },
+    "@nativescript-community/perms": {
+      "compromised_versions": ["3.0.5", "3.0.6", "3.0.7", "3.0.8"],
+      "safe_version": "3.0.4"
+    },
     "@nativescript-community/sentry": {
       "compromised_versions": ["4.6.43"],
       "safe_version": "4.6.42"
     },
+    "@nativescript-community/sqlite": {
+      "compromised_versions": ["3.5.2", "3.5.3", "3.5.4", "3.5.5"],
+      "safe_version": "3.5.1"
+    },
     "@nativescript-community/text": {
-      "compromised_versions": ["1.6.13"],
-      "safe_version": "1.6.12"
+      "compromised_versions": ["1.6.9", "1.6.10", "1.6.11", "1.6.12", "1.6.13"],
+      "safe_version": "1.6.8"
+    },
+    "@nativescript-community/typeorm": {
+      "compromised_versions": ["0.2.30", "0.2.31", "0.2.32", "0.2.33"],
+      "safe_version": "0.2.29"
     },
     "@nativescript-community/ui-collectionview": {
       "compromised_versions": ["6.0.6"],
       "safe_version": "6.0.5"
+    },
+    "@nativescript-community/ui-document-picker": {
+      "compromised_versions": ["1.1.27", "1.1.28"],
+      "safe_version": "1.1.26"
     },
     "@nativescript-community/ui-drawer": {
       "compromised_versions": ["0.1.30"],
@@ -106,104 +244,557 @@
       "compromised_versions": ["4.5.6"],
       "safe_version": "4.5.5"
     },
+    "@nativescript-community/ui-label": {
+      "compromised_versions": ["1.3.35", "1.3.36", "1.3.37"],
+      "safe_version": "1.3.34"
+    },
+    "@nativescript-community/ui-material-bottom-navigation": {
+      "compromised_versions": ["7.2.72", "7.2.73", "7.2.74", "7.2.75"],
+      "safe_version": "7.2.71"
+    },
     "@nativescript-community/ui-material-bottomsheet": {
       "compromised_versions": ["7.2.72"],
       "safe_version": "7.2.71"
     },
-    "@nativescript-community/ui-material-core": {
-      "compromised_versions": ["7.2.76"],
-      "safe_version": "7.2.75"
-    },
     "@nativescript-community/ui-material-core-tabs": {
-      "compromised_versions": ["7.2.76"],
-      "safe_version": "7.2.75"
+      "compromised_versions": ["7.2.72", "7.2.73", "7.2.74", "7.2.75", "7.2.76"],
+      "safe_version": "7.2.71"
+    },
+    "@nativescript-community/ui-material-core": {
+      "compromised_versions": ["7.2.72", "7.2.73", "7.2.74", "7.2.75", "7.2.76"],
+      "safe_version": "7.2.71"
+    },
+    "@nativescript-community/ui-material-ripple": {
+      "compromised_versions": ["7.2.72", "7.2.73", "7.2.74", "7.2.75"],
+      "safe_version": "7.2.71"
+    },
+    "@nativescript-community/ui-material-tabs": {
+      "compromised_versions": ["7.2.72", "7.2.73", "7.2.74", "7.2.75"],
+      "safe_version": "7.2.71"
+    },
+    "@nativescript-community/ui-pager": {
+      "compromised_versions": ["14.1.36", "14.1.37", "14.1.38"],
+      "safe_version": "14.1.35"
+    },
+    "@nativescript-community/ui-pulltorefresh": {
+      "compromised_versions": ["2.5.4", "2.5.5", "2.5.6", "2.5.7"],
+      "safe_version": "2.5.3"
+    },
+    "@nexe/config-manager": {
+      "compromised_versions": ["0.1.1"],
+      "safe_version": "0.1.0"
+    },
+    "@nexe/eslint-config": {
+      "compromised_versions": ["0.1.1"],
+      "safe_version": "0.1.0"
+    },
+    "@nexe/logger": {
+      "compromised_versions": ["0.1.3"],
+      "safe_version": "0.1.2"
+    },
+    "@nstudio/angular": {
+      "compromised_versions": ["20.0.4", "20.0.5", "20.0.6"],
+      "safe_version": "20.0.3"
+    },
+    "@nstudio/focus": {
+      "compromised_versions": ["20.0.4", "20.0.5", "20.0.6"],
+      "safe_version": "20.0.3"
+    },
+    "@nstudio/nativescript-checkbox": {
+      "compromised_versions": ["2.0.6", "2.0.7", "2.0.8", "2.0.9"],
+      "safe_version": "2.0.5"
+    },
+    "@nstudio/nativescript-loading-indicator": {
+      "compromised_versions": ["5.0.1", "5.0.2", "5.0.3", "5.0.4"],
+      "safe_version": "5.0.0"
+    },
+    "@nstudio/ui-collectionview": {
+      "compromised_versions": ["5.1.11", "5.1.12", "5.1.13", "5.1.14"],
+      "safe_version": "5.1.10"
+    },
+    "@nstudio/web-angular": {
+      "compromised_versions": ["20.0.4"],
+      "safe_version": "20.0.3"
+    },
+    "@nstudio/web": {
+      "compromised_versions": ["20.0.4"],
+      "safe_version": "20.0.3"
+    },
+    "@nstudio/xplat-utils": {
+      "compromised_versions": ["20.0.5", "20.0.6", "20.0.7"],
+      "safe_version": "20.0.4"
+    },
+    "@nstudio/xplat": {
+      "compromised_versions": ["20.0.5", "20.0.6", "20.0.7"],
+      "safe_version": "20.0.4"
+    },
+    "@operato/board": {
+      "compromised_versions": ["9.0.36", "9.0.37", "9.0.38", "9.0.39", "9.0.40", "9.0.41", "9.0.42", "9.0.43", "9.0.44", "9.0.45", "9.0.46"],
+      "safe_version": "9.0.35"
+    },
+    "@operato/data-grist": {
+      "compromised_versions": ["9.0.29", "9.0.35", "9.0.36", "9.0.37"],
+      "safe_version": "9.0.28"
+    },
+    "@operato/graphql": {
+      "compromised_versions": ["9.0.22", "9.0.35", "9.0.36", "9.0.37", "9.0.38", "9.0.39", "9.0.40", "9.0.41", "9.0.42", "9.0.43", "9.0.44", "9.0.45", "9.0.46"],
+      "safe_version": "9.0.21"
+    },
+    "@operato/headroom": {
+      "compromised_versions": ["9.0.2", "9.0.35", "9.0.36", "9.0.37"],
+      "safe_version": "9.0.1"
+    },
+    "@operato/help": {
+      "compromised_versions": ["9.0.35", "9.0.36", "9.0.37", "9.0.38", "9.0.39", "9.0.40", "9.0.41", "9.0.42", "9.0.43", "9.0.44", "9.0.45", "9.0.46"],
+      "safe_version": "9.0.34"
+    },
+    "@operato/i18n": {
+      "compromised_versions": ["9.0.35", "9.0.36", "9.0.37"],
+      "safe_version": "9.0.34"
+    },
+    "@operato/input": {
+      "compromised_versions": ["9.0.27", "9.0.35", "9.0.36", "9.0.37", "9.0.38", "9.0.39", "9.0.40", "9.0.41", "9.0.42", "9.0.43", "9.0.44", "9.0.45", "9.0.46", "9.0.47", "9.0.48"],
+      "safe_version": "9.0.26"
+    },
+    "@operato/layout": {
+      "compromised_versions": ["9.0.35", "9.0.36", "9.0.37"],
+      "safe_version": "9.0.34"
+    },
+    "@operato/popup": {
+      "compromised_versions": ["9.0.22", "9.0.35", "9.0.36", "9.0.37", "9.0.38", "9.0.39", "9.0.40", "9.0.41", "9.0.42", "9.0.43", "9.0.44", "9.0.45", "9.0.46", "9.0.49"],
+      "safe_version": "9.0.21"
+    },
+    "@operato/pull-to-refresh": {
+      "compromised_versions": ["9.0.36", "9.0.37", "9.0.38", "9.0.39", "9.0.40", "9.0.41", "9.0.42"],
+      "safe_version": "9.0.35"
+    },
+    "@operato/shell": {
+      "compromised_versions": ["9.0.22", "9.0.35", "9.0.36", "9.0.37", "9.0.38", "9.0.39"],
+      "safe_version": "9.0.21"
+    },
+    "@operato/styles": {
+      "compromised_versions": ["9.0.2", "9.0.35", "9.0.36", "9.0.37"],
+      "safe_version": "9.0.1"
+    },
+    "@operato/utils": {
+      "compromised_versions": ["9.0.22", "9.0.35", "9.0.36", "9.0.37", "9.0.38", "9.0.39", "9.0.40", "9.0.41", "9.0.42", "9.0.43", "9.0.44", "9.0.45", "9.0.46", "9.0.49"],
+      "safe_version": "9.0.21"
+    },
+    "@teselagen/bio-parsers": {
+      "compromised_versions": ["0.4.30"],
+      "safe_version": "0.4.29"
+    },
+    "@teselagen/bounce-loader": {
+      "compromised_versions": ["0.3.16", "0.3.17"],
+      "safe_version": "0.3.15"
+    },
+    "@teselagen/file-utils": {
+      "compromised_versions": ["0.3.22"],
+      "safe_version": "0.3.21"
+    },
+    "@teselagen/liquibase-tools": {
+      "compromised_versions": ["0.4.1"],
+      "safe_version": "0.4.0"
+    },
+    "@teselagen/ove": {
+      "compromised_versions": ["0.7.40"],
+      "safe_version": "0.7.39"
+    },
+    "@teselagen/range-utils": {
+      "compromised_versions": ["0.3.14", "0.3.15"],
+      "safe_version": "0.3.13"
+    },
+    "@teselagen/react-list": {
+      "compromised_versions": ["0.8.19", "0.8.20"],
+      "safe_version": "0.8.18"
+    },
+    "@teselagen/react-table": {
+      "compromised_versions": ["6.10.19", "6.10.20", "6.10.22"],
+      "safe_version": "6.10.18"
+    },
+    "@teselagen/sequence-utils": {
+      "compromised_versions": ["0.3.34"],
+      "safe_version": "0.3.33"
+    },
+    "@teselagen/ui": {
+      "compromised_versions": ["0.9.10"],
+      "safe_version": "0.9.9"
+    },
+    "@thangved/callback-window": {
+      "compromised_versions": ["1.1.4"],
+      "safe_version": "1.1.3"
+    },
+    "@things-factory/attachment-base": {
+      "compromised_versions": ["9.0.43", "9.0.44", "9.0.45", "9.0.46", "9.0.47", "9.0.48", "9.0.49", "9.0.50"],
+      "safe_version": "9.0.42"
+    },
+    "@things-factory/auth-base": {
+      "compromised_versions": ["9.0.43", "9.0.44", "9.0.45"],
+      "safe_version": "9.0.42"
+    },
+    "@things-factory/email-base": {
+      "compromised_versions": ["9.0.42", "9.0.43", "9.0.44", "9.0.45", "9.0.46", "9.0.47", "9.0.48", "9.0.49", "9.0.50", "9.0.51", "9.0.52", "9.0.53", "9.0.54"],
+      "safe_version": "9.0.41"
+    },
+    "@things-factory/env": {
+      "compromised_versions": ["9.0.42", "9.0.43", "9.0.44", "9.0.45"],
+      "safe_version": "9.0.41"
+    },
+    "@things-factory/integration-base": {
+      "compromised_versions": ["9.0.43", "9.0.44", "9.0.45"],
+      "safe_version": "9.0.42"
+    },
+    "@things-factory/integration-marketplace": {
+      "compromised_versions": ["9.0.43", "9.0.44", "9.0.45"],
+      "safe_version": "9.0.42"
+    },
+    "@things-factory/shell": {
+      "compromised_versions": ["9.0.43", "9.0.44", "9.0.45"],
+      "safe_version": "9.0.42"
+    },
+    "@tnf-dev/api": {
+      "compromised_versions": ["1.0.8"],
+      "safe_version": "1.0.7"
+    },
+    "@tnf-dev/core": {
+      "compromised_versions": ["1.0.8"],
+      "safe_version": "1.0.7"
+    },
+    "@tnf-dev/js": {
+      "compromised_versions": ["1.0.8"],
+      "safe_version": "1.0.7"
+    },
+    "@tnf-dev/mui": {
+      "compromised_versions": ["1.0.8"],
+      "safe_version": "1.0.7"
+    },
+    "@tnf-dev/react": {
+      "compromised_versions": ["1.0.8"],
+      "safe_version": "1.0.7"
+    },
+    "@ui-ux-gang/devextreme-angular-rpk": {
+      "compromised_versions": ["24.1.7"],
+      "safe_version": "24.1.6"
+    },
+    "@yoobic/design-system": {
+      "compromised_versions": ["6.5.17"],
+      "safe_version": "6.5.16"
+    },
+    "@yoobic/jpeg-camera-es6": {
+      "compromised_versions": ["1.0.13"],
+      "safe_version": "1.0.12"
+    },
+    "@yoobic/yobi": {
+      "compromised_versions": ["8.7.53"],
+      "safe_version": "8.7.52"
+    },
+    "airchief": {
+      "compromised_versions": ["0.3.1"],
+      "safe_version": "0.3.0"
+    },
+    "airpilot": {
+      "compromised_versions": ["0.8.8"],
+      "safe_version": "0.8.7"
+    },
+    "angulartics2": {
+      "compromised_versions": ["14.1.1", "14.1.2"],
+      "safe_version": "14.1.0"
+    },
+    "browser-webdriver-downloader": {
+      "compromised_versions": ["3.0.8"],
+      "safe_version": "3.0.7"
+    },
+    "capacitor-notificationhandler": {
+      "compromised_versions": ["0.0.2", "0.0.3"],
+      "safe_version": "0.0.1"
+    },
+    "capacitor-plugin-healthapp": {
+      "compromised_versions": ["0.0.2", "0.0.3"],
+      "safe_version": "0.0.1"
+    },
+    "capacitor-plugin-ihealth": {
+      "compromised_versions": ["1.1.8", "1.1.9"],
+      "safe_version": "1.1.7"
+    },
+    "capacitor-plugin-vonage": {
+      "compromised_versions": ["1.0.2", "1.0.3"],
+      "safe_version": "1.0.1"
+    },
+    "capacitorandroidpermissions": {
+      "compromised_versions": ["0.0.4", "0.0.5"],
+      "safe_version": "0.0.3"
+    },
+    "config-cordova": {
+      "compromised_versions": ["0.8.5"],
+      "safe_version": "0.8.4"
+    },
+    "cordova-plugin-voxeet2": {
+      "compromised_versions": ["1.0.24"],
+      "safe_version": "1.0.23"
+    },
+    "cordova-voxeet": {
+      "compromised_versions": ["1.0.32"],
+      "safe_version": "1.0.31"
+    },
+    "create-hest-app": {
+      "compromised_versions": ["0.1.9"],
+      "safe_version": "0.1.8"
+    },
+    "db-evo": {
+      "compromised_versions": ["1.1.4", "1.1.5"],
+      "safe_version": "1.1.3"
+    },
+    "devextreme-angular-rpk": {
+      "compromised_versions": ["21.2.8"],
+      "safe_version": "21.2.7"
+    },
+    "ember-browser-services": {
+      "compromised_versions": ["5.0.2", "5.0.3"],
+      "safe_version": "5.0.1"
+    },
+    "ember-headless-form-yup": {
+      "compromised_versions": ["1.0.1"],
+      "safe_version": "1.0.0"
+    },
+    "ember-headless-form": {
+      "compromised_versions": ["1.1.2", "1.1.3"],
+      "safe_version": "1.1.1"
+    },
+    "ember-headless-table": {
+      "compromised_versions": ["2.1.5", "2.1.6"],
+      "safe_version": "2.1.4"
+    },
+    "ember-url-hash-polyfill": {
+      "compromised_versions": ["1.0.12", "1.0.13"],
+      "safe_version": "1.0.11"
+    },
+    "ember-velcro": {
+      "compromised_versions": ["2.2.1", "2.2.2"],
+      "safe_version": "2.2.0"
+    },
+    "encounter-playground": {
+      "compromised_versions": ["0.0.2", "0.0.3", "0.0.4", "0.0.5"],
+      "safe_version": "0.0.1"
+    },
+    "eslint-config-crowdstrike-node": {
+      "compromised_versions": ["4.0.3", "4.0.4"],
+      "safe_version": "4.0.2"
+    },
+    "eslint-config-crowdstrike": {
+      "compromised_versions": ["11.0.2", "11.0.3"],
+      "safe_version": "11.0.1"
+    },
+    "eslint-config-teselagen": {
+      "compromised_versions": ["6.1.7", "6.1.8"],
+      "safe_version": "6.1.6"
+    },
+    "globalize-rpk": {
+      "compromised_versions": ["1.7.4"],
+      "safe_version": "1.7.3"
+    },
+    "graphql-sequelize-teselagen": {
+      "compromised_versions": ["5.3.8", "5.3.9"],
+      "safe_version": "5.3.7"
+    },
+    "html-to-base64-image": {
+      "compromised_versions": ["1.0.2"],
+      "safe_version": "1.0.1"
+    },
+    "json-rules-engine-simplified": {
+      "compromised_versions": ["0.2.1", "0.2.4"],
+      "safe_version": "0.2.0"
+    },
+    "jumpgate": {
+      "compromised_versions": ["0.0.2"],
+      "safe_version": "0.0.1"
+    },
+    "koa2-swagger-ui": {
+      "compromised_versions": ["5.11.1", "5.11.2"],
+      "safe_version": "5.11.0"
+    },
+    "mcfly-semantic-release": {
+      "compromised_versions": ["1.3.1"],
+      "safe_version": "1.3.0"
+    },
+    "mcp-knowledge-base": {
+      "compromised_versions": ["0.0.2"],
+      "safe_version": "0.0.1"
+    },
+    "mcp-knowledge-graph": {
+      "compromised_versions": ["1.2.1"],
+      "safe_version": "1.2.0"
+    },
+    "mobioffice-cli": {
+      "compromised_versions": ["1.0.3"],
+      "safe_version": "1.0.2"
+    },
+    "monorepo-next": {
+      "compromised_versions": ["13.0.1", "13.0.2"],
+      "safe_version": "13.0.0"
+    },
+    "mstate-angular": {
+      "compromised_versions": ["0.4.4"],
+      "safe_version": "0.4.3"
+    },
+    "mstate-cli": {
+      "compromised_versions": ["0.4.7"],
+      "safe_version": "0.4.6"
+    },
+    "mstate-dev-react": {
+      "compromised_versions": ["1.1.1"],
+      "safe_version": "1.1.0"
+    },
+    "mstate-react": {
+      "compromised_versions": ["1.6.5"],
+      "safe_version": "1.6.4"
+    },
+    "ng2-file-upload": {
+      "compromised_versions": ["7.0.2", "7.0.3", "8.0.1", "8.0.2", "8.0.3", "9.0.1"],
+      "safe_version": "7.0.1"
+    },
+    "ngx-bootstrap": {
+      "compromised_versions": ["18.1.4", "19.0.3", "19.0.4", "20.0.3", "20.0.4", "20.0.5"],
+      "safe_version": "18.1.3"
     },
     "ngx-color": {
-      "compromised_versions": ["10.0.2"],
-      "safe_version": "10.0.1"
+      "compromised_versions": ["10.0.1", "10.0.2"],
+      "safe_version": "10.0.0"
     },
     "ngx-toastr": {
-      "compromised_versions": ["19.0.2"],
-      "safe_version": "19.0.1"
+      "compromised_versions": ["19.0.1", "19.0.2"],
+      "safe_version": "19.0.0"
     },
     "ngx-trend": {
       "compromised_versions": ["8.0.1"],
       "safe_version": "8.0.0"
     },
+    "ngx-ws": {
+      "compromised_versions": ["1.1.5", "1.1.6"],
+      "safe_version": "1.1.4"
+    },
+    "oradm-to-gql": {
+      "compromised_versions": ["35.0.14", "35.0.15"],
+      "safe_version": "35.0.13"
+    },
+    "oradm-to-sqlz": {
+      "compromised_versions": ["1.1.2"],
+      "safe_version": "1.1.1"
+    },
+    "ove-auto-annotate": {
+      "compromised_versions": ["0.0.9", "0.0.10"],
+      "safe_version": "0.0.8"
+    },
+    "pm2-gelf-json": {
+      "compromised_versions": ["1.0.4", "1.0.5"],
+      "safe_version": "1.0.3"
+    },
+    "printjs-rpk": {
+      "compromised_versions": ["1.6.1"],
+      "safe_version": "1.6.0"
+    },
     "react-complaint-image": {
-      "compromised_versions": ["0.0.35"],
-      "safe_version": "0.0.34"
+      "compromised_versions": ["0.0.32", "0.0.35"],
+      "safe_version": "0.0.31"
     },
     "react-jsonschema-form-conditionals": {
-      "compromised_versions": ["0.3.21"],
-      "safe_version": "0.3.20"
+      "compromised_versions": ["0.3.18", "0.3.21"],
+      "safe_version": "0.3.17"
     },
     "react-jsonschema-form-extras": {
       "compromised_versions": ["1.0.4"],
       "safe_version": "1.0.3"
     },
+    "react-jsonschema-rxnt-extras": {
+      "compromised_versions": ["0.4.9"],
+      "safe_version": "0.4.8"
+    },
+    "remark-preset-lint-crowdstrike": {
+      "compromised_versions": ["4.0.1", "4.0.2"],
+      "safe_version": "4.0.0"
+    },
     "rxnt-authentication": {
-      "compromised_versions": ["0.0.6"],
-      "safe_version": "0.0.5"
+      "compromised_versions": ["0.0.3", "0.0.4", "0.0.5", "0.0.6"],
+      "safe_version": "0.0.2"
     },
     "rxnt-healthchecks-nestjs": {
-      "compromised_versions": ["1.0.5"],
-      "safe_version": "1.0.4"
+      "compromised_versions": ["1.0.2", "1.0.3", "1.0.4", "1.0.5"],
+      "safe_version": "1.0.1"
     },
     "rxnt-kue": {
-      "compromised_versions": ["1.0.7"],
-      "safe_version": "1.0.6"
+      "compromised_versions": ["1.0.4", "1.0.5", "1.0.6", "1.0.7"],
+      "safe_version": "1.0.3"
     },
     "swc-plugin-component-annotate": {
-      "compromised_versions": ["1.9.2"],
-      "safe_version": "1.9.1"
+      "compromised_versions": ["1.9.1", "1.9.2"],
+      "safe_version": "1.9.0"
+    },
+    "tbssnch": {
+      "compromised_versions": ["1.0.2"],
+      "safe_version": "1.0.1"
+    },
+    "teselagen-interval-tree": {
+      "compromised_versions": ["1.1.2"],
+      "safe_version": "1.1.1"
+    },
+    "tg-client-query-builder": {
+      "compromised_versions": ["2.14.4", "2.14.5"],
+      "safe_version": "2.14.3"
+    },
+    "tg-redbird": {
+      "compromised_versions": ["1.3.1", "1.3.2"],
+      "safe_version": "1.3.0"
+    },
+    "tg-seq-gen": {
+      "compromised_versions": ["1.0.9", "1.0.10"],
+      "safe_version": "1.0.8"
+    },
+    "thangved-react-grid": {
+      "compromised_versions": ["1.0.3"],
+      "safe_version": "1.0.2"
     },
     "ts-gaussian": {
-      "compromised_versions": ["3.0.6"],
-      "safe_version": "3.0.5"
+      "compromised_versions": ["3.0.5", "3.0.6"],
+      "safe_version": "3.0.4"
+    },
+    "ts-imports": {
+      "compromised_versions": ["1.0.1", "1.0.2"],
+      "safe_version": "1.0.0"
+    },
+    "tvi-cli": {
+      "compromised_versions": ["0.1.5"],
+      "safe_version": "0.1.4"
+    },
+    "ve-bamreader": {
+      "compromised_versions": ["0.2.6", "0.2.7"],
+      "safe_version": "0.2.5"
+    },
+    "ve-editor": {
+      "compromised_versions": ["1.0.1", "1.0.2"],
+      "safe_version": "1.0.0"
+    },
+    "verror-extra": {
+      "compromised_versions": ["6.0.1"],
+      "safe_version": "6.0.0"
+    },
+    "voip-callkit": {
+      "compromised_versions": ["1.0.2", "1.0.3"],
+      "safe_version": "1.0.1"
+    },
+    "wdio-web-reporter": {
+      "compromised_versions": ["0.1.3"],
+      "safe_version": "0.1.2"
+    },
+    "yargs-help-output": {
+      "compromised_versions": ["5.0.3"],
+      "safe_version": "5.0.2"
+    },
+    "yoo-styles": {
+      "compromised_versions": ["6.0.326"],
+      "safe_version": "6.0.325"
     }
   },
   
-  "potentially_compromised_packages": [
-    "@ahmedhfarag/ngx-perfect-scrollbar",
-    "@ahmedhfarag/ngx-virtual-scroller",
-    "@art-ws/common",
-    "@art-ws/config-eslint",
-    "@art-ws/config-ts",
-    "@art-ws/db-context",
-    "@art-ws/di",
-    "@art-ws/di-node",
-    "@art-ws/eslint",
-    "@art-ws/fastify-http-server",
-    "@art-ws/http-server",
-    "@art-ws/openapi",
-    "@art-ws/package-base",
-    "@art-ws/prettier",
-    "@art-ws/slf",
-    "@art-ws/ssl-info",
-    "@art-ws/web-app",
-    "@crowdstrike/commitlint",
-    "@crowdstrike/falcon-shoelace",
-    "@crowdstrike/foundry-js",
-    "@crowdstrike/glide-core",
-    "@crowdstrike/logscale-dashboard",
-    "@crowdstrike/logscale-file-editor",
-    "@crowdstrike/logscale-parser-edit",
-    "@crowdstrike/logscale-search",
-    "@crowdstrike/tailwind-toucan-base",
-    "@hestjs/core",
-    "@hestjs/cqrs",
-    "@hestjs/demo",
-    "@hestjs/eslint-config",
-    "@hestjs/logger",
-    "@hestjs/scalar",
-    "@hestjs/validation",
-    "@nativescript-community/arraybuffers",
-    "@nativescript-community/perms",
-    "@nativescript-community/sqlite",
-    "@nativescript-community/typeorm",
-    "@nativescript-community/ui-document-picker"
-  ],
+  "potentially_compromised_packages": [],
   
   "malicious_indicators": {
     "domains": [
@@ -282,54 +873,58 @@
   
   "remediation": {
     "immediate_actions": [
-      "Stop all running applications",
+      "Stop all running applications immediately",
       "Clear npm cache: npm cache clean --force",
       "Remove node_modules and lock files",
       "Update to safe package versions",
       "Reinstall dependencies",
       "Audit security: npm audit",
       "Check for unauthorized network connections",
-      "Review application logs for suspicious activity"
+      "Review application logs for suspicious activity",
+      "Scan for cryptocurrency wallet files",
+      "Check browser storage for sensitive data"
     ],
     "safe_overrides": {
-      "@ctrl/tinycolor": "4.0.0",
-      "angulartics2": "14.1.1",
-      "@ctrl/deluge": "7.2.1",
-      "@ctrl/golang-template": "1.4.2",
-      "@ctrl/magnet-link": "4.0.3",
-      "@ctrl/ngx-codemirror": "7.0.1",
-      "@ctrl/ngx-csv": "6.0.1",
-      "@ctrl/ngx-emoji-mart": "9.2.1",
-      "@ctrl/ngx-rightclick": "4.0.1",
-      "@ctrl/qbittorrent": "9.7.1",
-      "@ctrl/react-adsense": "2.0.1",
-      "@ctrl/shared-torrent": "6.3.1",
-      "@ctrl/torrent-file": "4.1.1",
+      "@ahmedhfarag/ngx-perfect-scrollbar": "20.0.19",
+      "@ahmedhfarag/ngx-virtual-scroller": "4.0.3",
+      "@art-ws/common": "2.0.27",
+      "@art-ws/config-eslint": "2.0.3",
+      "@art-ws/config-ts": "2.0.6",
+      "@art-ws/db-context": "2.0.23",
+      "@art-ws/di-node": "2.0.12",
+      "@art-ws/di": "2.0.27",
+      "@art-ws/eslint": "1.0.4",
+      "@art-ws/fastify-http-server": "2.0.23",
+      "@art-ws/http-server": "2.0.20",
+      "@art-ws/openapi": "0.1.8",
+      "@art-ws/package-base": "1.0.4",
+      "@art-ws/prettier": "1.0.4",
+      "@art-ws/slf": "2.0.14",
+      "@art-ws/ssl-info": "1.0.8",
+      "@art-ws/web-app": "1.0.2",
+      "@crowdstrike/commitlint": "8.1.0",
+      "@crowdstrike/falcon-shoelace": "0.4.0",
+      "@crowdstrike/foundry-js": "0.19.0",
+      "@crowdstrike/glide-core": "0.34.1",
+      "@crowdstrike/logscale-dashboard": "1.205.0",
+      "@crowdstrike/logscale-file-editor": "1.205.0",
+      "@crowdstrike/logscale-parser-edit": "1.205.0",
+      "@crowdstrike/logscale-search": "1.205.0",
+      "@crowdstrike/tailwind-toucan-base": "5.0.0",
+      "@ctrl/deluge": "7.2.0",
+      "@ctrl/golang-template": "1.4.1",
+      "@ctrl/magnet-link": "4.0.2",
+      "@ctrl/ngx-codemirror": "7.0.0",
+      "@ctrl/ngx-csv": "6.0.0",
+      "@ctrl/ngx-emoji-mart": "9.2.0",
+      "@ctrl/ngx-rightclick": "4.0.0",
+      "@ctrl/qbittorrent": "9.7.0",
+      "@ctrl/react-adsense": "2.0.0",
+      "@ctrl/shared-torrent": "6.3.0",
+      "@ctrl/tinycolor": "4.1.0",
+      "@ctrl/torrent-file": "4.1.0",
       "@ctrl/transmission": "7.3.0",
-      "@ctrl/ts-base32": "4.0.1",
-      "encounter-playground": "0.0.4",
-      "json-rules-engine-simplified": "0.2.0",
-      "koa2-swagger-ui": "5.11.0",
-      "@nativescript-community/gesturehandler": "2.0.34",
-      "@nativescript-community/sentry": "4.6.42",
-      "@nativescript-community/text": "1.6.12",
-      "@nativescript-community/ui-collectionview": "6.0.5",
-      "@nativescript-community/ui-drawer": "0.1.29",
-      "@nativescript-community/ui-image": "4.5.5",
-      "@nativescript-community/ui-material-bottomsheet": "7.2.71",
-      "@nativescript-community/ui-material-core": "7.2.75",
-      "@nativescript-community/ui-material-core-tabs": "7.2.75",
-      "ngx-color": "10.0.1",
-      "ngx-toastr": "19.0.1",
-      "ngx-trend": "8.0.0",
-      "react-complaint-image": "0.0.34",
-      "react-jsonschema-form-conditionals": "0.3.20",
-      "react-jsonschema-form-extras": "1.0.3",
-      "rxnt-authentication": "0.0.5",
-      "rxnt-healthchecks-nestjs": "1.0.4",
-      "rxnt-kue": "1.0.6",
-      "swc-plugin-component-annotate": "1.9.1",
-      "ts-gaussian": "3.0.5"
+      "@ctrl/ts-base32": "4.0.0"
     }
   }
 }

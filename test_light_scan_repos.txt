@@ -1,0 +1,10 @@
+# Light Scan Test Repository List
+# These repositories will be scanned using GitHub API (NPM files only)
+
+# Example repositories with NPM packages
+https://github.com/Security-Phoenix-demo/Shai-Halud-tinycolour-compromise-verifier
+
+# Add more repositories for testing
+# https://github.com/your-org/frontend-app
+# https://github.com/your-org/backend-service
+# https://github.com/your-org/mobile-app

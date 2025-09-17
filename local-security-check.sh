@@ -15,8 +15,8 @@ BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}🔍 NPM Package Compromise Detection - Local Runner${NC}"
-echo -e "${BLUE}================================================${NC}"
+echo -e "${BLUE}🔍 NPM Package Compromise Detection - Local Runner (195 Packages)${NC}"
+echo -e "${BLUE}============================================================${NC}"
 echo
 
 # Check prerequisites
@@ -100,3 +100,4 @@ fi
 
 # Exit with the same code as the scan
 exit $SCAN_RESULT
+

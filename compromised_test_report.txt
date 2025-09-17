@@ -1,0 +1,40 @@
+================================================================================
+ENHANCED NPM PACKAGE COMPROMISE DETECTION REPORT WITH PHOENIX INTEGRATION
+================================================================================
+Scan completed: 2025-09-17 14:56:57
+Files scanned: 0
+Total findings: 4
+
+SEVERITY SUMMARY:
+--------------------
+CRITICAL: 4
+
+DETAILED FINDINGS:
+--------------------
+1. [CRITICAL] Compromised package detected: @ctrl/tinycolor@4.1.2
+   📁 Location: test_compromised_packages/package.json
+   package: @ctrl/tinycolor
+   version: 4.1.2
+   📦 Type: dependencies
+   ⚠️  Compromised versions: 4.1.1, 4.1.2
+
+2. [CRITICAL] Compromised package detected: angulartics2@14.1.2
+   📁 Location: test_compromised_packages/package.json
+   package: angulartics2
+   version: 14.1.2
+   📦 Type: dependencies
+   ⚠️  Compromised versions: 14.1.1, 14.1.2
+
+3. [CRITICAL] Compromised package detected: @ctrl/deluge@7.2.1
+   📁 Location: test_compromised_packages/package.json
+   package: @ctrl/deluge
+   version: 7.2.1
+   📦 Type: devDependencies
+   ⚠️  Compromised versions: 7.2.1, 7.2.2
+
+4. [CRITICAL] Compromised package detected: ngx-color@10.0.1
+   📁 Location: test_compromised_packages/package.json
+   package: ngx-color
+   version: 10.0.1
+   📦 Type: devDependencies
+   ⚠️  Compromised versions: 10.0.1, 10.0.2

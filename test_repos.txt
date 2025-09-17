@@ -1,0 +1,9 @@
+# Test Repository List
+# This demonstrates repository list processing
+
+# Current repository (will use local copy)
+https://github.com/Security-Phoenix-demo/Shai-Halud-tinycolour-compromise-verifier
+
+# Example repositories (add your actual repos here)
+# https://github.com/your-org/your-repo-1
+# https://github.com/your-org/your-repo-2

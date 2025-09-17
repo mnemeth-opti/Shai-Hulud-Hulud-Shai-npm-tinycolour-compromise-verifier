@@ -1,0 +1,15 @@
+# Repository List for Batch Processing
+# One repository URL per line
+# Lines starting with # are comments and will be ignored
+
+# Example repositories (replace with your actual repositories)
+https://github.com/Security-Phoenix-demo/Shai-Halud-tinycolour-compromise-verifier
+https://github.com/your-org/your-repo-1
+https://github.com/your-org/your-repo-2
+
+# You can also use SSH URLs
+# git@github.com:your-org/your-repo.git
+
+# Or GitLab, Bitbucket, etc.
+# https://gitlab.com/your-org/your-repo
+# https://bitbucket.org/your-org/your-repo

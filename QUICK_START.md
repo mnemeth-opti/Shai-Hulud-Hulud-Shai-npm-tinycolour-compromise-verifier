@@ -1,4 +1,4 @@
-# 🚀 Quick Start Guide - NPM Package Compromise Detection
+# 🚀 Quick Start Guide - NPM Package Compromise Detection (195 Packages)
 
 ## 📋 Table of Contents
 - [Quick Usage Guide](#-quick-usage-guide)
@@ -8,6 +8,20 @@
 - [Troubleshooting](#-troubleshooting)
 
 ## ⚡ Quick Usage Guide
+
+### **🎯 Comprehensive Coverage (195 Packages)**
+
+Our scanner monitors **195 confirmed compromised packages** across **11+ major organizations**:
+
+- **@ctrl** - 15+ packages (TypeScript utilities, torrent tools)
+- **@nativescript-community** - 25+ packages (NativeScript components) 
+- **@art-ws** - 15+ packages (Web services, configuration)
+- **@crowdstrike** - 10+ packages (Security tooling)
+- **@operato** - 15+ packages (UI components)
+- **@teselagen** - 10+ packages (Bioinformatics tools)
+- **@things-factory** - 8+ packages (Factory automation)
+- **@nstudio** - 8+ packages (Development tools)
+- **Plus 100+ individual packages** from various maintainers
 
 ### **🎯 Immediate Usage (30 seconds)**
 
@@ -25,13 +39,13 @@ chmod +x *.sh
 python3 npm_package_compromise_detector_2025.py . --full-tree --output security-report.txt
 ```
 
-### **🔍 What Each Tool Does**
+### **🔍 What Each Tool Does (195 Package Coverage)**
 
-| Tool | Purpose | Speed | Use Case |
-|------|---------|-------|----------|
-| `./local-security-check.sh` | **Quick scanner with nice output** | ⚡ Fast | Daily checks, CI/CD |
-| `./quick-check-compromised-packages-2025.sh` | **Core detection engine** | ⚡ Fast | Direct usage, automation |
-| `python3 npm_package_compromise_detector_2025.py` | **Comprehensive analysis** | 🐌 Thorough | Security audits, reports |
+| Tool | Purpose | Speed | Use Case | Coverage |
+|------|---------|-------|----------|----------|
+| `./local-security-check.sh` | **Quick scanner with nice output** | ⚡ Fast | Daily checks, CI/CD | 195 packages + organizations |
+| `./quick-check-compromised-packages-2025.sh` | **Core detection engine** | ⚡ Fast | Direct usage, automation | 195 packages with specific versions |
+| `python3 npm_package_compromise_detector_2025.py` | **Comprehensive analysis** | 🐌 Thorough | Security audits, reports | 195 packages + source code analysis |
 
 ### **📊 Understanding Results**
 
@@ -39,13 +53,14 @@ python3 npm_package_compromise_detector_2025.py . --full-tree --output security-
 ```bash
 $ ./local-security-check.sh clean_project
 ✅ SCAN COMPLETE: No compromised packages detected
-   Your project appears to be clean of known compromised packages.
+   Your project appears to be clean of all 195 monitored compromised packages.
+   Scanned organizations: @ctrl, @nativescript-community, @art-ws, @crowdstrike, and 7+ others
 ```
 
 #### 🚨 **Compromised Project (Exit Code 1)**
 ```bash
 $ ./local-security-check.sh compromised_project
-🚨 CRITICAL: Compromised packages detected!
+🚨 CRITICAL: Compromised packages detected from 195 package database!
 
 IMMEDIATE ACTIONS REQUIRED:
 1. Stop all running applications immediately
@@ -53,6 +68,9 @@ IMMEDIATE ACTIONS REQUIRED:
 3. Remove node_modules: rm -rf node_modules
 4. Remove lock files: rm package-lock.json yarn.lock
 5. Update to safe versions and reinstall
+
+📋 For detailed analysis with safe version recommendations:
+python3 npm_package_compromise_detector_2025.py . --full-tree --output security-report.txt
 ```
 
 ### **🚨 Emergency Response (If Compromised Packages Found)**
@@ -258,7 +276,7 @@ build: security
 
 #### **Option 1: Using Local Tools (Recommended)**
 ```yaml
-name: NPM Package Security Scan
+name: NPM Package Security Scan - 195 Packages
 
 on:
   push:
@@ -273,7 +291,7 @@ on:
 
 jobs:
   security-scan:
-    name: Scan for Compromised NPM Packages
+    name: Scan for 195 Compromised NPM Packages (11+ Organizations)
     runs-on: ubuntu-latest
     
     steps:
@@ -324,20 +342,22 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
-          const comment = `## 🚨 Security Alert: Compromised NPM Packages Detected
+          const comment = \`## 🚨 Security Alert: Compromised NPM Packages Detected
           
-          **CRITICAL**: This pull request contains or depends on compromised NPM packages.
+          **CRITICAL**: This pull request contains or depends on compromised NPM packages from our database of **195 confirmed compromised packages**.
+          
+          **🎯 Organizations Monitored**: @ctrl, @nativescript-community, @art-ws, @crowdstrike, @operato, @teselagen, @things-factory, and others.
           
           ### Immediate Actions Required:
           1. 🛑 **DO NOT MERGE** this pull request
           2. 🧹 Clear npm cache: \`npm cache clean --force\`
           3. 🗑️ Remove node_modules: \`rm -rf node_modules\`
           4. 📋 Check the detailed security report in the workflow artifacts
-          5. 🔄 Update to safe package versions
+          5. 🔄 Update to safe package versions (auto-generated in report)
           6. ✅ Re-run security scan after fixes
           
-          **Detailed Report**: Download the \`security-report-${{ github.run_number }}\` artifact from this workflow run.
-          `;
+          **Detailed Report**: Download the \`security-report-\${{ github.run_number }}\` artifact from this workflow run for complete safe version recommendations.
+          \`;
           
           github.rest.issues.createComment({
             issue_number: context.issue.number,
@@ -357,7 +377,8 @@ jobs:
       if: steps.security-scan.outputs.scan_result == '0'
       run: |
         echo "✅ Security scan passed: No compromised packages detected"
-        echo "Your NPM dependencies appear to be clean"
+        echo "Your NPM dependencies are clean of all 195 monitored compromised packages"
+        echo "Scanned organizations: @ctrl, @nativescript-community, @art-ws, @crowdstrike, and 7+ others"
 ```
 
 #### **Option 2: Download from GitHub Raw (If Published)**
@@ -772,15 +793,15 @@ python3 npm_package_compromise_detector_2025.py . --full-tree --output pre-deplo
 python3 npm_package_compromise_detector_2025.py . --full-tree --output emergency-$(date +%Y%m%d).txt
 ```
 
-### **🎯 Command Comparison**
+### **🎯 Command Comparison (195 Package Coverage)**
 
-| Need | Command | Speed | Output |
-|------|---------|-------|--------|
-| **Quick daily check** | `./local-security-check.sh .` | ⚡ Fast | Clean summary |
-| **CI/CD integration** | `./quick-check-compromised-packages-2025.sh .` | ⚡ Fast | Basic output |
-| **Security audit** | `python3 npm_package_compromise_detector_2025.py . --full-tree` | 🐌 Thorough | Comprehensive |
-| **Detailed report** | `python3 npm_package_compromise_detector_2025.py . --full-tree --output report.txt` | 🐌 Thorough | File + console |
-| **Only critical issues** | `python3 npm_package_compromise_detector_2025.py . --quiet` | 🚀 Medium | Filtered |
+| Need | Command | Speed | Output | Coverage |
+|------|---------|-------|--------|----------|
+| **Quick daily check** | `./local-security-check.sh .` | ⚡ Fast | Clean summary | 195 packages + orgs |
+| **CI/CD integration** | `./quick-check-compromised-packages-2025.sh .` | ⚡ Fast | Basic output | 195 specific versions |
+| **Security audit** | `python3 npm_package_compromise_detector_2025.py . --full-tree` | 🐌 Thorough | Comprehensive | 195 + source analysis |
+| **Detailed report** | `python3 npm_package_compromise_detector_2025.py . --full-tree --output report.txt` | 🐌 Thorough | File + console | Full + safe versions |
+| **Only critical issues** | `python3 npm_package_compromise_detector_2025.py . --quiet` | 🚀 Medium | Filtered | 195 critical only |
 
 ### **📊 Exit Code Reference**
 - `0` = ✅ Clean (no compromised packages)
@@ -798,10 +819,11 @@ If you see compromised packages:
 7. ✅ **VERIFY** - `./local-security-check.sh .`
 
 ### **💡 Pro Tips**
-- Run `./local-security-check.sh .` every morning
-- Add to your git pre-commit hooks
-- Use `--full-tree` for comprehensive audits
-- Save reports with timestamps for tracking
-- Integrate into CI/CD for automated protection
+- Run `./local-security-check.sh .` every morning (monitors 195 packages)
+- Add to your git pre-commit hooks for automatic protection
+- Use `--full-tree` for comprehensive audits across all dependencies
+- Save reports with timestamps for tracking trends
+- Integrate into CI/CD for automated protection against 11+ organizations
+- Monitor the security report for auto-generated safe version recommendations
 
-**Remember**: Speed is critical with supply chain attacks. Run these checks immediately and take action if compromised packages are detected!
+**Remember**: Speed is critical with supply chain attacks affecting 195+ packages across major organizations. Run these checks immediately and take action if compromised packages are detected!

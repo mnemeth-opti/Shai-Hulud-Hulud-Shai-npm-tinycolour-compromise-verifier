@@ -1,0 +1,11 @@
+# Public Repository Test List for Light Scan
+# These are public repositories that should work without authentication
+
+# Popular React project
+https://github.com/facebook/create-react-app
+
+# Popular Vue project  
+https://github.com/vuejs/vue
+
+# Our test repository
+https://github.com/Security-Phoenix-demo/Shai-Halud-tinycolour-compromise-verifier
