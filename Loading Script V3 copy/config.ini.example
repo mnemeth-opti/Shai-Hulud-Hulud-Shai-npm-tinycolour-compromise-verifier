@@ -1,0 +1,25 @@
+[phoenix]
+# Phoenix Security API Configuration
+# Copy this file to config.ini and fill in your actual values
+# NOTE: Environment variables take precedence over this file
+
+# Your Phoenix client ID
+client_id = YOURCLIENTID
+
+# Your Phoenix client secret (Personal Access Token)
+client_secret = YOUR PAT
+
+# Phoenix API base URL (choose one)
+# For demo environment:
+#api_base_url = https://api.demo.appsecphx.io
+# For poc1 environment:
+api_base_url = https://api.poc1.appsecphx.io
+# For production environment:
+# api_base_url = https://api.appsecphx.io
+
+# Default scanner type for batch imports
+# Common types: Tenable Scan, SonarQube Scan, Aqua Scan, etc.
+scan_type = Tenable Scan
+
+# Default scan file to process if no --file or --folder is specified
+# scan_file = nessus-import.csv
