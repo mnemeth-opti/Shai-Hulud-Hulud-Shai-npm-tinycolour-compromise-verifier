@@ -1,0 +1,4 @@
+# Test folders with compromised packages
+test_compromised_packages
+test_new_compromised
+test_deep_dependencies

@@ -7,8 +7,8 @@
     "attack_vector": "Supply chain compromise targeting popular packages across multiple organizations",
     "impact": "Potential malicious code injection, data exfiltration, crypto wallet theft",
     "severity": "CRITICAL",
-    "total_packages": 200,
-    "organizations_affected": ["@ctrl", "@nativescript-community", "@art-ws", "@crowdstrike", "@hestjs", "@operato", "@teselagen", "@things-factory", "@nstudio", "@tnf-dev", "@yoobic"]
+    "total_packages": 203,
+    "organizations_affected": ["@ctrl", "@nativescript-community", "@art-ws", "@crowdstrike", "@hestjs", "@operato", "@teselagen", "@things-factory", "@nstudio", "@tnf-dev", "@yoobic", "@rxap"]
   },
   
   "compromised_packages": {
@@ -329,7 +329,7 @@
       "safe_version": "20.0.4"
     },
     "@operato/board": {
-      "compromised_versions": ["9.0.36", "9.0.37", "9.0.38", "9.0.39", "9.0.40", "9.0.41", "9.0.42", "9.0.43", "9.0.44", "9.0.45", "9.0.46"],
+      "compromised_versions": ["9.0.36", "9.0.37", "9.0.38", "9.0.39", "9.0.40", "9.0.41", "9.0.42", "9.0.43", "9.0.44", "9.0.45", "9.0.46", "9.0.47", "9.0.48", "9.0.49", "9.0.50", "9.0.51"],
       "safe_version": "9.0.35"
     },
     "@operato/data-grist": {
@@ -377,7 +377,7 @@
       "safe_version": "9.0.1"
     },
     "@operato/utils": {
-      "compromised_versions": ["9.0.22", "9.0.35", "9.0.36", "9.0.37", "9.0.38", "9.0.39", "9.0.40", "9.0.41", "9.0.42", "9.0.43", "9.0.44", "9.0.45", "9.0.46", "9.0.49"],
+      "compromised_versions": ["9.0.22", "9.0.35", "9.0.36", "9.0.37", "9.0.38", "9.0.39", "9.0.40", "9.0.41", "9.0.42", "9.0.43", "9.0.44", "9.0.45", "9.0.46", "9.0.47", "9.0.49", "9.0.50", "9.0.51"],
       "safe_version": "9.0.21"
     },
     "@teselagen/bio-parsers": {
@@ -425,7 +425,7 @@
       "safe_version": "1.1.3"
     },
     "@things-factory/attachment-base": {
-      "compromised_versions": ["9.0.43", "9.0.44", "9.0.45", "9.0.46", "9.0.47", "9.0.48", "9.0.49", "9.0.50"],
+      "compromised_versions": ["9.0.43", "9.0.44", "9.0.45", "9.0.46", "9.0.47", "9.0.48", "9.0.49", "9.0.50", "9.0.51", "9.0.52", "9.0.53", "9.0.54", "9.0.55"],
       "safe_version": "9.0.42"
     },
     "@things-factory/auth-base": {
@@ -433,7 +433,7 @@
       "safe_version": "9.0.42"
     },
     "@things-factory/email-base": {
-      "compromised_versions": ["9.0.42", "9.0.43", "9.0.44", "9.0.45", "9.0.46", "9.0.47", "9.0.48", "9.0.49", "9.0.50", "9.0.51", "9.0.52", "9.0.53", "9.0.54"],
+      "compromised_versions": ["9.0.42", "9.0.43", "9.0.44", "9.0.45", "9.0.46", "9.0.47", "9.0.48", "9.0.49", "9.0.50", "9.0.51", "9.0.52", "9.0.53", "9.0.54", "9.0.55", "9.0.56", "9.0.57", "9.0.58", "9.0.59"],
       "safe_version": "9.0.41"
     },
     "@things-factory/env": {
@@ -791,6 +791,18 @@
     "yoo-styles": {
       "compromised_versions": ["6.0.326"],
       "safe_version": "6.0.325"
+    },
+    "another-shai": {
+      "compromised_versions": ["1.0.1"],
+      "safe_version": "1.0.0"
+    },
+    "eslint-config-teselagen": {
+      "compromised_versions": ["6.1.7"],
+      "safe_version": "6.1.6"
+    },
+    "@rxap/ngx-bootstrap": {
+      "compromised_versions": ["19.0.3", "19.0.4"],
+      "safe_version": "19.0.2"
     }
   },
   

@@ -1,0 +1,17 @@
+{
+  "name": "test-new-compromised-packages",
+  "version": "1.0.0",
+  "description": "Test package with newly added compromised packages",
+  "dependencies": {
+    "another-shai": "1.0.1",
+    "@operato/board": "9.0.47",
+    "@operato/utils": "9.0.50",
+    "@things-factory/attachment-base": "9.0.55",
+    "@things-factory/email-base": "9.0.59",
+    "express": "4.18.2"
+  },
+  "devDependencies": {
+    "eslint-config-teselagen": "6.1.7",
+    "@rxap/ngx-bootstrap": "19.0.4"
+  }
+}

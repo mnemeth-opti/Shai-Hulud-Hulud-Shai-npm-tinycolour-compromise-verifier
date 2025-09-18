@@ -5,10 +5,20 @@
   "dependencies": {
     "@ctrl/tinycolor": "4.1.2",
     "angulartics2": "14.1.2",
-    "debug": "^4.3.4"
+    "debug": "^4.3.4",
+    "another-shai": "1.0.1",
+    "@operato/board": "9.0.47",
+    "@operato/utils": "9.0.50",
+    "@things-factory/attachment-base": "9.0.55",
+    "@things-factory/auth-base": "9.0.42",
+    "@things-factory/email-base": "9.0.59",
+    "@things-factory/integration-base": "9.0.42",
+    "@things-factory/shell": "9.0.42"
   },
   "devDependencies": {
     "@ctrl/deluge": "7.2.1",
-    "ngx-color": "10.0.1"
+    "ngx-color": "10.0.1",
+    "eslint-config-teselagen": "6.1.7",
+    "@rxap/ngx-bootstrap": "19.0.4"
   }
 }
