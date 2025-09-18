@@ -1,0 +1,5 @@
+# Project folder list
+# Onew folder per line
+
+test_deep_dependencies
+test_compromised_packages

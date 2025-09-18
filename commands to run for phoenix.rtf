@@ -1,0 +1,175 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab560
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\fs26 \cf0 Absolutely! Here are the exact commands for each scanning scenario:\
+\
+## \uc0\u55357 \u56589  **Local Scan Commands**\
+\
+### **1. Basic Local Scan (Vanilla Mode)**\
+```bash\
+# Scan current directory\
+python3 enhanced_npm_compromise_detector_phoenix.py .\
+\
+# Scan specific project\
+python3 enhanced_npm_compromise_detector_phoenix.py /path/to/your/project\
+\
+# Scan multiple local folders\
+python3 enhanced_npm_compromise_detector_phoenix.py --folders ~/project1 ~/project2 ~/project3\
+\
+# Scan from folder list file\
+python3 enhanced_npm_compromise_detector_phoenix.py --folder-list ~/my_projects.txt\
+```\
+\
+### **2. Local Scan with Output Report**\
+```bash\
+# Generate detailed report\
+python3 enhanced_npm_compromise_detector_phoenix.py . --output "security_report_$(date +%Y%m%d).txt"\
+\
+# Quiet scan with report\
+python3 enhanced_npm_compromise_detector_phoenix.py --folder-list ~/my_projects.txt --quiet --output batch_scan.txt\
+```\
+\
+## \uc0\u55357 \u56599  **Phoenix Synchronization Scan Commands**\
+\
+### **3. Scan with Phoenix Integration (Embedded Credentials)**\
+```bash\
+# First, edit the script to add your Phoenix credentials at line ~67:\
+# self.embedded_credentials = \{\
+#     'client_id': 'your_actual_phoenix_client_id',\
+#     'client_secret': 'your_actual_phoenix_client_secret', \
+#     'api_base_url': 'https://your-phoenix-domain.com/api',\
+# \}\
+\
+# Then run with embedded credentials\
+python3 enhanced_npm_compromise_detector_phoenix.py . --use-embedded-credentials --enable-phoenix\
+\
+# Batch scan with Phoenix sync\
+python3 enhanced_npm_compromise_detector_phoenix.py --folder-list ~/my_projects.txt --use-embedded-credentials --enable-phoenix --output "phoenix_sync_$(date +%Y%m%d).txt"\
+```\
+\
+### **4. Phoenix Sync with Environment Variables**\
+```bash\
+# Set Phoenix credentials as environment variables\
+export PHOENIX_CLIENT_ID="your_actual_client_id"\
+export PHOENIX_CLIENT_SECRET="your_actual_client_secret"\
+export PHOENIX_API_URL="https://your-phoenix-domain.com/api"\
+\
+# Run with Phoenix integration\
+python3 enhanced_npm_compromise_detector_phoenix.py . --enable-phoenix\
+\
+# Batch scan with Phoenix\
+python3 enhanced_npm_compromise_detector_phoenix.py --folder-list ~/my_projects.txt --enable-phoenix\
+```\
+\
+### **5. Phoenix Sync with Config File**\
+```bash\
+# Create .config file with your credentials\
+python3 enhanced_npm_compromise_detector_phoenix.py --create-config\
+# Edit .config file with your actual credentials\
+\
+# Run with Phoenix integration\
+python3 enhanced_npm_compromise_detector_phoenix.py . --enable-phoenix --phoenix-config .config\
+```\
+\
+## \uc0\u55356 \u57104  **GitHub Account Scan Commands**\
+\
+### **6. Light Scan GitHub Repositories**\
+```bash\
+# Set GitHub token for higher rate limits (recommended)\
+export GITHUB_TOKEN=your_github_token_here\
+\
+# Create repository list for your GitHub account\
+cat > github_repos.txt << EOF\
+https://github.com/yourusername/repo1\
+https://github.com/yourusername/repo2\
+https://github.com/yourusername/repo3\
+EOF\
+\
+# Light scan GitHub repositories (NPM files only - very fast)\
+python3 enhanced_npm_compromise_detector_phoenix.py --repo-list github_repos.txt --light-scan --quiet\
+```\
+\
+### **7. GitHub Scan with Phoenix Integration**\
+```bash\
+# Light scan GitHub repos with Phoenix sync\
+python3 enhanced_npm_compromise_detector_phoenix.py \\\
+  --repo-list github_repos.txt \\\
+  --light-scan \\\
+  --use-embedded-credentials \\\
+  --enable-phoenix \\\
+  --output "github_security_scan_$(date +%Y%m%d).txt"\
+```\
+\
+### **8. Generate GitHub Repository List Automatically**\
+```bash\
+# Generate repository list from GitHub API (requires GitHub token)\
+export GITHUB_TOKEN=your_github_token_here\
+\
+# Get all your repositories\
+curl -H "Authorization: token $GITHUB_TOKEN" \\\
+     "https://api.github.com/user/repos?per_page=100&type=owner" | \\\
+     jq -r '.[].clone_url' > my_github_repos.txt\
+\
+# Or get organization repositories\
+curl -H "Authorization: token $GITHUB_TOKEN" \\\
+     "https://api.github.com/orgs/your-org/repos?per_page=100" | \\\
+     jq -r '.[].clone_url' > org_repos.txt\
+\
+# Then scan all repositories\
+python3 enhanced_npm_compromise_detector_phoenix.py \\\
+  --repo-list my_github_repos.txt \\\
+  --light-scan \\\
+  --use-embedded-credentials \\\
+  --enable-phoenix\
+```\
+\
+## \uc0\u55357 \u56960  **Quick Copy-Paste Commands**\
+\
+### **Local Scan (No Setup Required)**\
+```bash\
+python3 enhanced_npm_compromise_detector_phoenix.py . --quiet\
+```\
+\
+### **Phoenix Sync (After Setting Up Credentials)**\
+```bash\
+python3 enhanced_npm_compromise_detector_phoenix.py . --use-embedded-credentials --enable-phoenix --output "phoenix_report_$(date +%Y%m%d).txt"\
+```\
+\
+### **GitHub Light Scan (After Creating Repo List)**\
+```bash\
+export GITHUB_TOKEN=your_github_token_here\
+python3 enhanced_npm_compromise_detector_phoenix.py --repo-list github_repos.txt --light-scan --quiet\
+```\
+\
+## \uc0\u55357 \u56523  **Create Your Repository Lists**\
+\
+### **Local Projects List**\
+```bash\
+cat > ~/my_local_projects.txt << EOF\
+/Users/yourname/Documents/GitHub/project1\
+/Users/yourname/Documents/GitHub/project2\
+/Users/yourname/work/client-project\
+EOF\
+```\
+\
+### **GitHub Projects List**\
+```bash\
+cat > ~/github_repos.txt << EOF\
+https://github.com/yourusername/frontend-app\
+https://github.com/yourusername/backend-api\
+https://github.com/yourusername/mobile-app\
+EOF\
+```\
+\
+## \uc0\u55356 \u57263  **Most Common Usage Patterns**\
+\
+1. **Daily Local Check**: `python3 enhanced_npm_compromise_detector_phoenix.py . --quiet`\
+2. **Weekly Phoenix Sync**: `python3 enhanced_npm_compromise_detector_phoenix.py --folder-list ~/my_projects.txt --use-embedded-credentials --enable-phoenix`\
+3. **GitHub Monitoring**: `python3 enhanced_npm_compromise_detector_phoenix.py --repo-list github_repos.txt --light-scan --enable-phoenix`\
+\
+Choose the commands that match your specific use case! \uc0\u55356 \u57225 }

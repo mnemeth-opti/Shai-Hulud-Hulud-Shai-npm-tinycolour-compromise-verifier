@@ -61,9 +61,9 @@ class EnhancedNPMCompromiseDetectorPhoenix:
         self.use_embedded_credentials = False
         
         # Folder organization for GitHub pulls and results
-        self.timestamp = datetime.now().strftime('%Y%m%d')
+        self.timestamp = datetime.now().strftime('%y%m%d_%H%M%S')  # YYMMDD_HHMMSS format
         self.github_pull_dir = os.path.join('github-pull', self.timestamp)
-        self.result_dir = os.path.join('result', self.timestamp)
+        self.result_dir = os.path.join('results', self.timestamp)  # Always use timestamped results
         self.organize_folders = False
         
         # 🔐 EMBEDDED CREDENTIALS FOR LOCAL LAPTOP USE
@@ -588,6 +588,9 @@ import_type = new
         print(f"📦 Processing: {file_path}")
         if repo_url:
             print(f"🔗 Repository: {repo_url}")
+            
+        # Track scanned files
+        self.scanned_files.append(file_path)
         
         # Scan the file for compromised packages
         if file_path.endswith('package.json'):
@@ -660,6 +663,15 @@ import_type = new
                     for package_name, version in package_data[dep_type].items():
                         clean_version = self.normalize_version(version)
                         
+                        # Track all scanned packages
+                        package_info = {
+                            'package': package_name,
+                            'version': version,
+                            'type': dep_type,
+                            'file': file_path
+                        }
+                        self.scanned_packages.append(package_info)
+                        
                         # Check if package is compromised
                         is_compromised, severity, compromised_versions = self.check_package_compromise(package_name, clean_version)
                         
@@ -672,6 +684,9 @@ import_type = new
                                 'severity': severity,
                                 'compromised_versions': compromised_versions
                             })
+                        else:
+                            # Track clean packages
+                            self.safe_packages.append(package_info)
                             
                             # Log finding
                             if severity == 'CRITICAL':
@@ -1061,7 +1076,7 @@ import_type = new
         
         # Create directory for downloaded files
         if self.organize_folders:
-            # Use organized folder structure
+            # Use organized folder structure with timestamp
             repo_dir = os.path.join(self.github_pull_dir, repo)
             os.makedirs(repo_dir, exist_ok=True)
             temp_dir = repo_dir
@@ -1114,6 +1129,15 @@ import_type = new
                 
                 if not os.path.exists(folder_path):
                     print(f"⚠️  Folder not found: {folder_path}")
+                    print(f"📁 Available folders in current directory:")
+                    try:
+                        current_dirs = [d for d in os.listdir('.') if os.path.isdir(d)]
+                        for d in sorted(current_dirs)[:5]:  # Show first 5 directories
+                            print(f"   • {d}")
+                        if len(current_dirs) > 5:
+                            print(f"   ... and {len(current_dirs) - 5} more")
+                    except:
+                        pass
                     continue
                     
                 if not os.path.isdir(folder_path):
@@ -1264,6 +1288,8 @@ import_type = new
         report_lines.append("=" * 80)
         report_lines.append(f"Scan completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         report_lines.append(f"Files scanned: {len(self.scanned_files)}")
+        report_lines.append(f"Total packages scanned: {len(self.scanned_packages)}")
+        report_lines.append(f"Clean packages found: {len(self.safe_packages)}")
         report_lines.append(f"Total findings: {len(self.findings)}")
         
         if self.enable_phoenix_import:
@@ -1306,6 +1332,31 @@ import_type = new
             report_lines.append("✅ No compromised packages detected!")
             report_lines.append("")
             
+        # Clean packages section
+        if self.safe_packages:
+            report_lines.append("CLEAN PACKAGES SCANNED:")
+            report_lines.append("-" * 20)
+            
+            # Group by file for better organization
+            files_with_packages = {}
+            for package in self.safe_packages:
+                file_path = package['file']
+                if file_path not in files_with_packages:
+                    files_with_packages[file_path] = []
+                files_with_packages[file_path].append(package)
+            
+            for file_path, packages in files_with_packages.items():
+                report_lines.append(f"📁 {file_path}:")
+                for package in packages:
+                    report_lines.append(f"   ✅ {package['package']}@{package['version']} ({package['type']})")
+                report_lines.append("")
+        elif self.scanned_files:
+            report_lines.append("SCANNED FILES:")
+            report_lines.append("-" * 20)
+            for file_path in self.scanned_files:
+                report_lines.append(f"📁 {file_path}")
+            report_lines.append("")
+            
         # Scan mode information
         if self.light_scan_mode:
             report_lines.append("SCAN MODE:")
@@ -1326,13 +1377,34 @@ import_type = new
         report_content = '\n'.join(report_lines)
         
         if output_file:
-            # If using organized folders, save to result directory
-            if self.organize_folders and not os.path.isabs(output_file):
+            # Always use timestamped results directory unless absolute path
+            if not os.path.isabs(output_file):
                 output_file = os.path.join(self.result_dir, output_file)
+            
+            # Ensure the directory exists
+            output_dir = os.path.dirname(output_file)
+            if output_dir and not os.path.exists(output_dir):
+                os.makedirs(output_dir, exist_ok=True)
+                print(f"📁 Created timestamped directory: {output_dir}")
                 
             with open(output_file, 'w', encoding='utf-8') as f:
                 f.write(report_content)
             print(f"📄 Report saved to: {output_file}")
+        else:
+            # If no output file specified, save to default timestamped results directory
+            default_filename = f"security_scan.txt"
+            output_file = os.path.join(self.result_dir, default_filename)
+                
+            # Ensure the directory exists
+            output_dir = os.path.dirname(output_file)
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir, exist_ok=True)
+                print(f"📁 Created timestamped directory: {output_dir}")
+                
+            with open(output_file, 'w', encoding='utf-8') as f:
+                f.write(report_content)
+            print(f"📄 Report saved to: {output_file}")
+            print(report_content)
             
         return report_content
 
