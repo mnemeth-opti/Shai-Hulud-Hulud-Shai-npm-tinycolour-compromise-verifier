@@ -1,6 +1,6 @@
 [phoenix]
 # Phoenix Security API Configuration
-# ⚠️  IMPORTANT: Replace ALL values below with your actual Phoenix Security credentials
+# IMPORTANT: Replace ALL values below with your actual Phoenix Security credentials
 
 # Required credentials - GET FROM YOUR PHOENIX SECURITY PLATFORM
 client_id = your_phoenix_client_id_here
@@ -11,7 +11,7 @@ api_base_url = https://your-phoenix-domain.com/api
 assessment_name = NPM Compromise Detection - Shai Halud
 import_type = new
 
-# 🔧 SETUP INSTRUCTIONS:
+# SETUP INSTRUCTIONS:
 # 1. Replace 'your_phoenix_client_id_here' with your actual client ID from Phoenix Security
 # 2. Replace 'your_phoenix_client_secret_here' with your actual client secret from Phoenix Security
 # 3. Replace 'your-phoenix-domain.com/api' with your Phoenix Security API endpoint

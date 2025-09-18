@@ -44,6 +44,7 @@ class EnhancedNPMCompromiseDetectorPhoenix:
         self.safe_packages = []
         self.phoenix_assets = []  # Assets to be imported to Phoenix
         self.phoenix_findings = []  # Findings to be imported to Phoenix
+        self.debug_mode = False  # Debug mode flag
         
         self.dependency_stats = {
             'direct_dependencies': 0,
@@ -229,7 +230,8 @@ import_type = new
                 "origin": "github" if "github.com" in (repo_url or "") else "unknown"
             },
             "tags": [
-                {"value": "shai-halud"},
+                {"value": "Shai-hulud"},
+                {"value": "supplychain"},
                 {"value": "npm-security"},
                 {"value": "compromise-detection"}
             ],
@@ -248,7 +250,7 @@ import_type = new
         risk_mapping = {
             'CRITICAL': "10.0",  # Compromised package
             'HIGH': "8.0",       # Potentially compromised
-            'INFO': "3.0"        # Safe version of monitored package
+            'INFO': "1.0"        # Safe version of monitored package
         }
         
         risk_score = risk_mapping.get(severity, "5.0")
@@ -286,6 +288,13 @@ import_type = new
             "publishedDateTime": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
             "referenceIds": [],  # Could add CVE IDs if available
             "cwes": ["CWE-1104"],  # Use of Untrusted Inputs in a Security Decision
+            "tags": [
+                {"value": "Shai-hulud"},
+                {"value": "supplychain"},
+                {"value": "shai-hulud-compromised-package" if not is_safe else "shai-hulud-clean-library"},
+                {"value": "npm-security"},
+                {"value": "compromise-detection"}
+            ],
             "packages": [{"name": package_name, "version": version}],
             "details": {
                 "package_name": package_name,
@@ -355,6 +364,10 @@ import_type = new
             "assets": self.phoenix_assets
         }
         
+        # Save debug payload if debug mode is enabled
+        if self.debug_mode:
+            self._save_debug_payload(import_payload)
+        
         url = f"{self.phoenix_config['api_base_url']}/v1/import/assets"
         headers = {
             'Authorization': f'Bearer {token}',
@@ -370,6 +383,10 @@ import_type = new
                 timeout=120
             )
             
+            # Save debug response if debug mode is enabled
+            if self.debug_mode:
+                self._save_debug_response(response, import_payload)
+            
             if response.status_code in [200, 201]:
                 print("✅ Successfully imported assets and findings to Phoenix Security")
                 return True
@@ -380,6 +397,85 @@ import_type = new
         except Exception as e:
             print(f"❌ Error importing to Phoenix: {str(e)}")
             return False
+    
+    def _save_debug_payload(self, payload: Dict[str, Any]):
+        """Save Phoenix API payload to debug file"""
+        try:
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            debug_dir = "debug"
+            
+            # Save the full payload
+            payload_file = os.path.join(debug_dir, f"phoenix_payload_{timestamp}.json")
+            with open(payload_file, 'w', encoding='utf-8') as f:
+                json.dump(payload, f, indent=2, ensure_ascii=False, default=str)
+            
+            # Save assets summary
+            assets_summary = {
+                "total_assets": len(payload.get('assets', [])),
+                "assets_with_findings": len([a for a in payload.get('assets', []) if a.get('findings')]),
+                "total_findings": sum(len(a.get('findings', [])) for a in payload.get('assets', [])),
+                "assessment_info": payload.get('assessment', {}),
+                "import_type": payload.get('importType', 'unknown')
+            }
+            
+            summary_file = os.path.join(debug_dir, f"phoenix_summary_{timestamp}.json")
+            with open(summary_file, 'w', encoding='utf-8') as f:
+                json.dump(assets_summary, f, indent=2, ensure_ascii=False)
+            
+            print(f"🐛 Debug: Payload saved to {payload_file}")
+            print(f"🐛 Debug: Summary saved to {summary_file}")
+            
+        except Exception as e:
+            print(f"⚠️  Warning: Could not save debug payload: {str(e)}")
+    
+    def _save_debug_response(self, response: requests.Response, original_payload: Dict[str, Any]):
+        """Save Phoenix API response to debug file"""
+        try:
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            debug_dir = "debug"
+            
+            # Prepare response data
+            response_data = {
+                "status_code": response.status_code,
+                "status_text": response.reason,
+                "headers": dict(response.headers),
+                "url": response.url,
+                "request_method": response.request.method,
+                "timestamp": timestamp,
+                "success": response.status_code in [200, 201]
+            }
+            
+            # Add response body if available
+            try:
+                if response.text:
+                    response_data["response_body"] = response.json() if response.headers.get('content-type', '').startswith('application/json') else response.text
+                else:
+                    response_data["response_body"] = None
+            except:
+                response_data["response_body"] = response.text if response.text else None
+            
+            # Add request summary
+            response_data["request_summary"] = {
+                "assets_sent": len(original_payload.get('assets', [])),
+                "findings_sent": sum(len(a.get('findings', [])) for a in original_payload.get('assets', [])),
+                "assessment_name": original_payload.get('assessment', {}).get('name', 'Unknown')
+            }
+            
+            response_file = os.path.join(debug_dir, f"phoenix_response_{timestamp}.json")
+            with open(response_file, 'w', encoding='utf-8') as f:
+                json.dump(response_data, f, indent=2, ensure_ascii=False, default=str)
+            
+            print(f"🐛 Debug: Response saved to {response_file}")
+            
+            # Print summary to console
+            if response.status_code in [200, 201]:
+                print(f"🐛 Debug: ✅ Phoenix import successful (Status: {response.status_code})")
+            else:
+                print(f"🐛 Debug: ❌ Phoenix import failed (Status: {response.status_code})")
+                print(f"🐛 Debug: Error details saved in {response_file}")
+            
+        except Exception as e:
+            print(f"⚠️  Warning: Could not save debug response: {str(e)}")
 
     def load_compromise_data(self):
         """Load compromised package data from JSON configuration"""
@@ -470,6 +566,15 @@ import_type = new
             print(f"📁 Folder organization enabled:")
             print(f"   GitHub pulls: {self.github_pull_dir}")
             print(f"   Results: {self.result_dir}")
+    
+    def enable_debug_mode(self, enable: bool = True):
+        """Enable or disable debug mode for Phoenix API payloads and responses"""
+        self.debug_mode = enable
+        if enable:
+            # Create debug directory if it doesn't exist
+            debug_dir = "debug"
+            os.makedirs(debug_dir, exist_ok=True)
+            print(f"🐛 Debug mode enabled: Phoenix API payloads and responses will be saved to '{debug_dir}/' directory")
         
     def get_repo_url_from_path(self, file_path: str) -> Optional[str]:
         """Extract repository URL from local file path"""
@@ -1372,6 +1477,8 @@ def main():
                        help='Light scan mode: download only NPM files from repositories (faster, GitHub only)')
     parser.add_argument('--organize-folders', action='store_true',
                        help='Organize GitHub pulls in github-pull/YYYYMMDD and results in result/YYYYMMDD')
+    parser.add_argument('--debug', action='store_true',
+                       help='Enable debug mode: save Phoenix API payloads and responses to debug files')
     
     args = parser.parse_args()
     
@@ -1411,6 +1518,9 @@ def main():
         
     if args.organize_folders:
         detector.enable_folder_organization(True)
+        
+    if args.debug:
+        detector.enable_debug_mode(True)
     
     print(f"📁 Target: {os.path.abspath(args.target)}")
     print()

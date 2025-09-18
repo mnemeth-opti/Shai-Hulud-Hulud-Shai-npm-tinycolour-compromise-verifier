@@ -7,3 +7,7 @@
 /visualization
 JSON_DATABASE_SUMMARY.md
 VISUALIZATION_SYSTEM_SUMMARY.md
+/debug
+.config
+/result
+/test_results
