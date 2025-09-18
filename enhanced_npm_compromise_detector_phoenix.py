@@ -221,24 +221,12 @@ import_type = new
         
     def create_phoenix_asset(self, file_path: str, repo_url: str) -> Dict:
         """Create a Phoenix asset for a package file"""
-        # Generate unique asset ID
-        asset_id = str(uuid.uuid4())
-        
-        # Determine asset name based on file type and repository
-        if repo_url:
-            parsed_url = urlparse(repo_url)
-            repo_name = parsed_url.path.strip('/').split('/')[-1]
-            asset_name = f"{repo_name}/{Path(file_path).name}"
-        else:
-            asset_name = str(Path(file_path).relative_to(Path.cwd()))
             
         asset = {
-            "id": asset_id,
             "attributes": {
                 "repository": repo_url or "unknown",
-                "buildFile": str(Path(file_path).name),
-                "origin": "github" if "github.com" in (repo_url or "") else "unknown",
-                "scannerSource": f"Shai Halud NPM Compromise Detector - {file_path}"
+                "buildFile": file_path,
+                "origin": "github" if "github.com" in (repo_url or "") else "unknown"
             },
             "tags": [
                 {"value": "shai-halud"},
@@ -294,10 +282,11 @@ import_type = new
             "description": description,
             "remedy": remedy,
             "severity": risk_score,
-            "location": f"{file_path} ({dependency_type})",
-            "publishedDateTime": datetime.now().strftime("%Y:%m:%d %H:%M:%S"),
+            "location": f"{package_name}@{version}",
+            "publishedDateTime": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
             "referenceIds": [],  # Could add CVE IDs if available
             "cwes": ["CWE-1104"],  # Use of Untrusted Inputs in a Security Decision
+            "packages": [{"name": package_name, "version": version}],
             "details": {
                 "package_name": package_name,
                 "package_version": version,
@@ -619,7 +608,8 @@ import_type = new
             asset['findings'].append(phoenix_finding)
             
         # Add installed software information
-        self._add_installed_software_to_asset(asset, file_path)
+        # TODO - Review this. installedSoftware is for OS packages and apps
+        #self._add_installed_software_to_asset(asset, file_path)
         
         return asset
         
