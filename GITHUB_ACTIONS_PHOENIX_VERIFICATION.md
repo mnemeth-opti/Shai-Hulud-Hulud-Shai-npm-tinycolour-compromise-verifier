@@ -146,9 +146,9 @@ I have thoroughly tested and verified that the GitHub Actions workflow **DOES** 
 ### **Step 1: Configure Repository Secrets**
 Go to your GitHub repository → Settings → Secrets and variables → Actions:
 ```
-PHOENIX_CLIENT_ID = **********
-PHOENIX_CLIENT_SECRET = **********
-PHOENIX_API_URL = https://api.demo.appsecphx.io
+PHOENIX_CLIENT_ID = your-phoenix-client-id-here
+PHOENIX_CLIENT_SECRET = your-phoenix-client-secret-here
+PHOENIX_API_URL = https://your-phoenix-domain.com/api
 ```
 
 ### **Step 2: Run Workflow with Phoenix**

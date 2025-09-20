@@ -1,13 +1,55 @@
-/old
-/test_deep_dependencies/node_modules
-/api-doc
-/Loading Script V3 copy
-/results
-/github-pull
-/visualization
-JSON_DATABASE_SUMMARY.md
-VISUALIZATION_SYSTEM_SUMMARY.md
-/debug
+# Sensitive configuration files
 .config
-/result
-/test_results
+*.config
+.env
+*.env
+
+# API keys and credentials
+**/secrets/
+**/credentials/
+
+# Debug and temporary files
+/debug/
+/result/
+/results/
+/test_results/
+/github-pull/
+
+# Node modules
+/test_deep_dependencies/node_modules
+**/node_modules/
+
+# Archive and backup directories  
+/old/
+/api-doc/
+/Loading Script V3 copy/
+/visualization/
+
+# Generated reports and logs
+*.log
+*.txt
+*.json
+!package.json
+!package-lock.json
+!compromised_packages_2025.json
+
+# Documentation files (keep in repo)
+!README.md
+!*.md
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary test files
+temp_*
+test_temp_*
+
+# Rich text format files (may contain sensitive data)
+*.rtf

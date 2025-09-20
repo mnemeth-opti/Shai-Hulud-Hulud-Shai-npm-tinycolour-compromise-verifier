@@ -1,16 +1,24 @@
 #!/usr/bin/env bash
 # Test script to simulate GitHub Actions Phoenix integration
 # This simulates what the GitHub Actions workflow does
+#
+# ⚠️  SECURITY WARNING: 
+# Before running this script, replace the placeholder credentials below 
+# with your actual Phoenix Security credentials. DO NOT commit real 
+# credentials to version control!
 
 set -euo pipefail
 
 echo "🧪 Testing GitHub Actions Phoenix Integration Simulation"
 echo "========================================================"
+echo "⚠️  WARNING: Ensure you have replaced placeholder credentials with real values!"
+echo ""
 
 # Simulate environment variables that GitHub Actions would set
-export PHOENIX_CLIENT_ID="3a22919f-ff02-44a4-a708-5a6269a4b795"
-export PHOENIX_CLIENT_SECRET="pat1_2502f71e321043778110389043842768a296f1d68b5b460e94d9775e4cff9c8f"
-export PHOENIX_API_URL="https://api.demo.appsecphx.io"
+# NOTE: Replace these with your actual Phoenix Security credentials
+export PHOENIX_CLIENT_ID="your-phoenix-client-id-here"
+export PHOENIX_CLIENT_SECRET="your-phoenix-client-secret-here"
+export PHOENIX_API_URL="https://your-phoenix-domain.com/api"
 
 echo "🔧 Simulating GitHub Actions steps..."
 
