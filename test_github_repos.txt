@@ -1,3 +1,0 @@
-# Test GitHub repositories for organized folder structure
-https://github.com/facebook/create-react-app
-https://github.com/vuejs/vue

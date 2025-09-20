@@ -1,19 +1,32 @@
 {
   "name": "test-project",
   "version": "1.0.0",
-  "description": "Test project for compromise detection",
+  "description": "Test project for compromise detection - balanced mix of clean and compromised packages",
   "dependencies": {
-    "@ctrl/tinycolor": "4.1.2",
-    "angulartics2": "14.1.2",
+    "@ctrl/tinycolor": "4.1.0",
+    "angulartics2": "14.1.0",
     "express": "4.18.2",
-    "lodash": "4.17.21"
+    "lodash": "4.17.21",
+    "react": "18.2.0",
+    "vue": "3.3.4",
+    "@nativescript-community/perms": "3.0.4",
+    "@operato/board": "9.0.35",
+    "@operato/utils": "9.0.21",
+    "another-shai": "1.0.0",
+    "@things-factory/auth-base": "9.0.42",
+    "@things-factory/integration-base": "9.0.42"
   },
   "devDependencies": {
-    "@ctrl/ngx-codemirror": "7.0.2",
-    "ngx-toastr": "19.0.2",
-    "typescript": "5.0.0"
+    "@ctrl/ngx-codemirror": "7.0.1",
+    "ngx-toastr": "19.0.1",
+    "typescript": "5.0.0",
+    "webpack": "5.88.0",
+    "eslint": "8.45.0",
+    "@rxap/ngx-bootstrap": "19.0.2",
+    "eslint-config-teselagen": "6.1.6"
   },
   "peerDependencies": {
-    "@nativescript-community/sentry": "4.6.43"
+    "@nativescript-community/sentry": "4.6.42",
+    "@teriyakibomb/ember-velcro": "2.2.0"
   }
 }
