@@ -1,0 +1,353 @@
+pipeline {
+    agent any
+    
+    parameters {
+        choice(
+            name: 'SCAN_TYPE',
+            choices: ['quick', 'enhanced', 'light-scan', 'phoenix-integration'],
+            description: 'Select the type of security scan to perform'
+        )
+        string(
+            name: 'TARGET_PATH',
+            defaultValue: '.',
+            description: 'Path to scan (e.g., . or path/to/project)'
+        )
+        string(
+            name: 'REPO_LIST_FILE',
+            defaultValue: '',
+            description: 'Path to repository list file (for light-scan or repo-list scans)'
+        )
+        booleanParam(
+            name: 'ENABLE_PHOENIX',
+            defaultValue: false,
+            description: 'Enable Phoenix Security API integration'
+        )
+        booleanParam(
+            name: 'DEBUG_MODE',
+            defaultValue: false,
+            description: 'Enable debug mode for Phoenix API payloads/responses'
+        )
+        booleanParam(
+            name: 'ORGANIZE_FOLDERS',
+            defaultValue: true,
+            description: 'Enable organized folder structure for results'
+        )
+    }
+    
+    environment {
+        // Phoenix Security API credentials (configure in Jenkins credentials)
+        PHOENIX_CLIENT_ID = credentials('phoenix-client-id')
+        PHOENIX_CLIENT_SECRET = credentials('phoenix-client-secret')
+        PHOENIX_API_URL = credentials('phoenix-api-url')
+        
+        // GitHub token for light scan rate limits
+        GITHUB_TOKEN = credentials('github-token')
+        
+        // Build information
+        BUILD_TIMESTAMP = sh(returnStdout: true, script: 'date +"%Y%m%d_%H%M%S"').trim()
+        REPORT_NAME = "jenkins-security-report-${BUILD_NUMBER}-${BUILD_TIMESTAMP}.txt"
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                echo '📥 Checking out source code...'
+                checkout scm
+            }
+        }
+        
+        stage('Setup Environment') {
+            steps {
+                echo '🔧 Setting up environment...'
+                sh '''
+                    # Install required Python packages
+                    pip3 install --user requests configparser
+                    
+                    # Make scripts executable
+                    chmod +x enhanced_npm_compromise_detector_phoenix.py || true
+                    chmod +x enhanced-quick-check-with-phoenix.sh || true
+                    chmod +x quick-check-compromised-packages-2025.sh || true
+                    
+                    # Display environment info
+                    echo "Python version: $(python3 --version)"
+                    echo "Build number: ${BUILD_NUMBER}"
+                    echo "Scan type: ${SCAN_TYPE}"
+                    echo "Target path: ${TARGET_PATH}"
+                    echo "Phoenix enabled: ${ENABLE_PHOENIX}"
+                '''
+            }
+        }
+        
+        stage('Quick Security Check') {
+            when {
+                anyOf {
+                    params.SCAN_TYPE == 'quick'
+                    params.SCAN_TYPE == 'enhanced'
+                    params.SCAN_TYPE == 'phoenix-integration'
+                }
+            }
+            steps {
+                echo '🔍 Running quick security check...'
+                script {
+                    try {
+                        sh './quick-check-compromised-packages-2025.sh ${TARGET_PATH}'
+                    } catch (Exception e) {
+                        echo "⚠️ Quick check detected potential issues: ${e.getMessage()}"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
+        
+        stage('Configure Phoenix') {
+            when {
+                anyOf {
+                    params.ENABLE_PHOENIX == true
+                    params.SCAN_TYPE == 'phoenix-integration'
+                }
+            }
+            steps {
+                echo '🔐 Configuring Phoenix Security API...'
+                script {
+                    if (env.PHOENIX_CLIENT_ID && env.PHOENIX_CLIENT_SECRET && env.PHOENIX_API_URL) {
+                        sh '''
+                            echo "Creating Phoenix configuration..."
+                            cat > .config << EOF
+[phoenix]
+client_id = ${PHOENIX_CLIENT_ID}
+client_secret = ${PHOENIX_CLIENT_SECRET}
+api_base_url = ${PHOENIX_API_URL}
+assessment_name = NPM Compromise Detection - Jenkins Build ${BUILD_NUMBER}
+import_type = new
+EOF
+                            echo "PHOENIX_CONFIGURED=true" > phoenix.env
+                        '''
+                        env.PHOENIX_CONFIGURED = 'true'
+                    } else {
+                        echo '⚠️ Phoenix credentials not configured in Jenkins'
+                        env.PHOENIX_CONFIGURED = 'false'
+                    }
+                }
+            }
+        }
+        
+        stage('Enhanced Security Analysis') {
+            when {
+                anyOf {
+                    params.SCAN_TYPE == 'enhanced'
+                    params.SCAN_TYPE == 'phoenix-integration'
+                }
+            }
+            steps {
+                echo '🛡️ Running enhanced security analysis...'
+                script {
+                    def scanCommand = "python3 enhanced_npm_compromise_detector_phoenix.py"
+                    
+                    // Add target path or repo list
+                    if (params.REPO_LIST_FILE) {
+                        scanCommand += " --repo-list ${params.REPO_LIST_FILE}"
+                    } else {
+                        scanCommand += " ${params.TARGET_PATH}"
+                    }
+                    
+                    // Add optional flags
+                    if (params.ENABLE_PHOENIX || params.SCAN_TYPE == 'phoenix-integration') {
+                        scanCommand += " --enable-phoenix"
+                    }
+                    
+                    if (params.DEBUG_MODE) {
+                        scanCommand += " --debug"
+                    }
+                    
+                    if (params.ORGANIZE_FOLDERS) {
+                        scanCommand += " --organize-folders"
+                    }
+                    
+                    scanCommand += " --output ${REPORT_NAME}"
+                    
+                    echo "Executing: ${scanCommand}"
+                    
+                    try {
+                        sh scanCommand
+                    } catch (Exception e) {
+                        echo "⚠️ Enhanced analysis completed with issues: ${e.getMessage()}"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
+        
+        stage('Light Scan External Repositories') {
+            when {
+                params.SCAN_TYPE == 'light-scan'
+            }
+            steps {
+                echo '🪶 Running light scan on external repositories...'
+                script {
+                    def scanCommand = "python3 enhanced_npm_compromise_detector_phoenix.py --light-scan"
+                    
+                    if (params.REPO_LIST_FILE) {
+                        scanCommand += " --repo-list ${params.REPO_LIST_FILE}"
+                    } else {
+                        error("Light scan requires a repository list file")
+                    }
+                    
+                    if (params.ENABLE_PHOENIX) {
+                        scanCommand += " --enable-phoenix"
+                    }
+                    
+                    if (params.DEBUG_MODE) {
+                        scanCommand += " --debug"
+                    }
+                    
+                    if (params.ORGANIZE_FOLDERS) {
+                        scanCommand += " --organize-folders"
+                    }
+                    
+                    scanCommand += " --output light-scan-${REPORT_NAME}"
+                    
+                    echo "Executing: ${scanCommand}"
+                    
+                    try {
+                        sh scanCommand
+                    } catch (Exception e) {
+                        echo "⚠️ Light scan completed with issues: ${e.getMessage()}"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
+        
+        stage('Security Gate') {
+            steps {
+                echo '🚨 Checking for critical security findings...'
+                script {
+                    def reportFiles = sh(
+                        returnStdout: true,
+                        script: 'find . -name "*security-report*.txt" -o -name "*${REPORT_NAME}*" 2>/dev/null || true'
+                    ).trim().split('\n')
+                    
+                    def criticalFound = false
+                    
+                    for (reportFile in reportFiles) {
+                        if (reportFile && fileExists(reportFile)) {
+                            def criticalCount = sh(
+                                returnStdout: true,
+                                script: "grep -c 'CRITICAL' ${reportFile} || echo '0'"
+                            ).trim().toInteger()
+                            
+                            if (criticalCount > 0) {
+                                echo "🚨 Found ${criticalCount} CRITICAL findings in ${reportFile}"
+                                criticalFound = true
+                            }
+                        }
+                    }
+                    
+                    if (criticalFound) {
+                        echo "🚨 Critical security findings detected!"
+                        if (params.SCAN_TYPE == 'phoenix-integration') {
+                            currentBuild.result = 'FAILURE'
+                            error("Critical security vulnerabilities found - failing build")
+                        } else {
+                            currentBuild.result = 'UNSTABLE'
+                        }
+                    } else {
+                        echo "✅ No critical security findings detected"
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            echo '📊 Archiving results and cleaning up...'
+            
+            // Archive reports
+            archiveArtifacts(
+                artifacts: '**/*security-report*.txt, **/*${REPORT_NAME}*, result/**, debug/**',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
+            
+            // Generate build summary
+            script {
+                def summary = """
+## 🛡️ NPM Security Scan Results - Build #${BUILD_NUMBER}
+
+### Scan Configuration
+- **Scan Type**: ${params.SCAN_TYPE}
+- **Target**: ${params.TARGET_PATH}
+- **Phoenix Integration**: ${env.PHOENIX_CONFIGURED ?: 'false'}
+- **Debug Mode**: ${params.DEBUG_MODE}
+- **Timestamp**: ${BUILD_TIMESTAMP}
+
+### Build Status
+- **Result**: ${currentBuild.result ?: 'SUCCESS'}
+- **Duration**: ${currentBuild.durationString}
+
+### Artifacts
+- Security reports archived
+- Debug files available (if enabled)
+- Organized results in timestamped folders
+                """.trim()
+                
+                writeFile file: 'build-summary.md', text: summary
+                archiveArtifacts artifacts: 'build-summary.md', fingerprint: true
+            }
+        }
+        
+        success {
+            echo '✅ NPM Security scan completed successfully!'
+            
+            // Send success notification
+            script {
+                if (env.SLACK_WEBHOOK_URL) {
+                    sh """
+                        curl -X POST -H 'Content-type: application/json' \\
+                        --data '{"text":"✅ NPM Security Scan SUCCESS - Build #${BUILD_NUMBER}\\nRepository: ${env.JOB_NAME}\\nScan Type: ${params.SCAN_TYPE}\\nPhoenix Integration: ${env.PHOENIX_CONFIGURED ?: 'false'}"}' \\
+                        ${env.SLACK_WEBHOOK_URL}
+                    """
+                }
+            }
+        }
+        
+        failure {
+            echo '❌ NPM Security scan failed!'
+            
+            // Send failure notification
+            script {
+                if (env.SLACK_WEBHOOK_URL) {
+                    sh """
+                        curl -X POST -H 'Content-type: application/json' \\
+                        --data '{"text":"🚨 NPM Security Scan FAILED - Build #${BUILD_NUMBER}\\nRepository: ${env.JOB_NAME}\\nScan Type: ${params.SCAN_TYPE}\\nCheck console output for details"}' \\
+                        ${env.SLACK_WEBHOOK_URL}
+                    """
+                }
+            }
+        }
+        
+        unstable {
+            echo '⚠️ NPM Security scan completed with warnings!'
+            
+            // Send unstable notification
+            script {
+                if (env.SLACK_WEBHOOK_URL) {
+                    sh """
+                        curl -X POST -H 'Content-type: application/json' \\
+                        --data '{"text":"⚠️ NPM Security Scan UNSTABLE - Build #${BUILD_NUMBER}\\nRepository: ${env.JOB_NAME}\\nScan Type: ${params.SCAN_TYPE}\\nSecurity findings detected - review artifacts"}' \\
+                        ${env.SLACK_WEBHOOK_URL}
+                    """
+                }
+            }
+        }
+        
+        cleanup {
+            // Clean up temporary files
+            sh '''
+                rm -f .config phoenix.env || true
+                find . -name "temp_*" -delete || true
+            '''
+        }
+    }
+}
