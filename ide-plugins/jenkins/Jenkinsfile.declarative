@@ -1,0 +1,129 @@
+// Simplified Declarative Jenkins Pipeline for NPM Security Scanning
+// This pipeline focuses on essential security scanning with Phoenix integration
+
+pipeline {
+    agent any
+    
+    parameters {
+        choice(
+            name: 'SCAN_MODE',
+            choices: ['standard', 'phoenix-enabled', 'light-scan'],
+            description: 'Security scan mode'
+        )
+        string(
+            name: 'SCAN_PATH',
+            defaultValue: '.',
+            description: 'Directory or file to scan'
+        )
+        booleanParam(
+            name: 'FAIL_ON_CRITICAL',
+            defaultValue: true,
+            description: 'Fail build if critical vulnerabilities are found'
+        )
+    }
+    
+    environment {
+        // Credentials configured in Jenkins
+        PHOENIX_CLIENT_ID = credentials('phoenix-client-id')
+        PHOENIX_CLIENT_SECRET = credentials('phoenix-client-secret') 
+        PHOENIX_API_URL = credentials('phoenix-api-url')
+        GITHUB_TOKEN = credentials('github-token')
+        
+        // Build info
+        SCAN_TIMESTAMP = sh(returnStdout: true, script: 'date +"%Y%m%d_%H%M%S"').trim()
+    }
+    
+    stages {
+        stage('Setup') {
+            steps {
+                echo "🔧 Setting up NPM Security Scanner - Build #${BUILD_NUMBER}"
+                sh '''
+                    pip3 install --user requests configparser
+                    chmod +x *.py *.sh || true
+                    echo "Scan mode: ${SCAN_MODE}"
+                    echo "Target: ${SCAN_PATH}"
+                '''
+            }
+        }
+        
+        stage('Security Scan') {
+            steps {
+                echo '🛡️ Running NPM security analysis...'
+                script {
+                    def command = "python3 enhanced_npm_compromise_detector_phoenix.py ${params.SCAN_PATH}"
+                    
+                    // Configure based on scan mode
+                    switch(params.SCAN_MODE) {
+                        case 'phoenix-enabled':
+                            sh '''
+                                cat > .config << EOF
+[phoenix]
+client_id = ${PHOENIX_CLIENT_ID}
+client_secret = ${PHOENIX_CLIENT_SECRET}
+api_base_url = ${PHOENIX_API_URL}
+assessment_name = Jenkins NPM Scan - Build ${BUILD_NUMBER}
+import_type = new
+EOF
+                            '''
+                            command += " --enable-phoenix"
+                            break
+                        case 'light-scan':
+                            command += " --light-scan"
+                            break
+                    }
+                    
+                    command += " --output jenkins-scan-${SCAN_TIMESTAMP}.txt --organize-folders"
+                    
+                    try {
+                        sh command
+                    } catch (Exception e) {
+                        if (params.FAIL_ON_CRITICAL) {
+                            throw e
+                        } else {
+                            currentBuild.result = 'UNSTABLE'
+                            echo "⚠️ Scan completed with issues: ${e.getMessage()}"
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Results') {
+            steps {
+                echo '📊 Processing scan results...'
+                script {
+                    // Check for critical findings
+                    def criticalCount = sh(
+                        returnStdout: true,
+                        script: "find . -name '*scan*.txt' -exec grep -c 'CRITICAL' {} + 2>/dev/null | awk '{sum+=\\$1} END {print sum+0}'"
+                    ).trim().toInteger()
+                    
+                    echo "Critical findings: ${criticalCount}"
+                    
+                    if (criticalCount > 0 && params.FAIL_ON_CRITICAL) {
+                        error("🚨 ${criticalCount} critical vulnerabilities found!")
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            // Archive all results
+            archiveArtifacts(
+                artifacts: '**/*scan*.txt, result/**, debug/**',
+                allowEmptyArchive: true
+            )
+        }
+        success {
+            echo '✅ NPM Security scan passed!'
+        }
+        failure {
+            echo '❌ NPM Security scan failed - check artifacts for details'
+        }
+        cleanup {
+            sh 'rm -f .config || true'
+        }
+    }
+}

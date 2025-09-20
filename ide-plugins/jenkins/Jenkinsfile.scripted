@@ -1,0 +1,249 @@
+// Scripted Jenkins Pipeline for Advanced NPM Security Scanning
+// Provides maximum flexibility and control over the scanning process
+
+node {
+    def scanResults = [:]
+    def buildTimestamp = sh(returnStdout: true, script: 'date +"%Y%m%d_%H%M%S"').trim()
+    def reportFile = "scripted-security-report-${BUILD_NUMBER}-${buildTimestamp}.txt"
+    
+    try {
+        stage('Initialization') {
+            echo "🚀 Starting NPM Security Scan - Build #${BUILD_NUMBER}"
+            
+            // Checkout code
+            checkout scm
+            
+            // Set build description
+            currentBuild.description = "NPM Security Scan - ${params.SCAN_TYPE ?: 'standard'}"
+            
+            // Initialize scan results
+            scanResults.startTime = new Date()
+            scanResults.buildNumber = BUILD_NUMBER
+            scanResults.criticalCount = 0
+            scanResults.totalFindings = 0
+        }
+        
+        stage('Environment Setup') {
+            echo '🔧 Configuring environment...'
+            
+            // Install dependencies
+            sh '''
+                pip3 install --user requests configparser
+                chmod +x enhanced_npm_compromise_detector_phoenix.py
+                chmod +x *.sh || true
+            '''
+            
+            // Configure Phoenix if credentials are available
+            withCredentials([
+                string(credentialsId: 'phoenix-client-id', variable: 'PHOENIX_CLIENT_ID'),
+                string(credentialsId: 'phoenix-client-secret', variable: 'PHOENIX_CLIENT_SECRET'),
+                string(credentialsId: 'phoenix-api-url', variable: 'PHOENIX_API_URL')
+            ]) {
+                if (env.PHOENIX_CLIENT_ID && env.PHOENIX_CLIENT_SECRET && env.PHOENIX_API_URL) {
+                    echo '🔐 Phoenix credentials detected - enabling Phoenix integration'
+                    scanResults.phoenixEnabled = true
+                    
+                    sh '''
+                        cat > .config << EOF
+[phoenix]
+client_id = ${PHOENIX_CLIENT_ID}
+client_secret = ${PHOENIX_CLIENT_SECRET}
+api_base_url = ${PHOENIX_API_URL}
+assessment_name = Jenkins Scripted Pipeline - Build ${BUILD_NUMBER}
+import_type = new
+EOF
+                    '''
+                } else {
+                    echo '⚠️ Phoenix credentials not configured - running in local mode'
+                    scanResults.phoenixEnabled = false
+                }
+            }
+        }
+        
+        stage('Quick Security Check') {
+            echo '🔍 Running quick security validation...'
+            
+            def quickCheckResult = sh(
+                returnStatus: true,
+                script: './quick-check-compromised-packages-2025.sh .'
+            )
+            
+            scanResults.quickCheckPassed = (quickCheckResult == 0)
+            
+            if (quickCheckResult != 0) {
+                echo '⚠️ Quick check detected potential issues - proceeding with enhanced scan'
+            } else {
+                echo '✅ Quick check passed'
+            }
+        }
+        
+        stage('Enhanced Security Scan') {
+            echo '🛡️ Executing comprehensive security analysis...'
+            
+            // Build scan command
+            def scanCommand = "python3 enhanced_npm_compromise_detector_phoenix.py ."
+            
+            if (scanResults.phoenixEnabled) {
+                scanCommand += " --enable-phoenix"
+            }
+            
+            scanCommand += " --output ${reportFile} --organize-folders --debug"
+            
+            echo "Executing: ${scanCommand}"
+            
+            def scanExitCode = sh(
+                returnStatus: true,
+                script: scanCommand
+            )
+            
+            scanResults.scanExitCode = scanExitCode
+            scanResults.scanPassed = (scanExitCode == 0)
+            
+            // Parse results
+            if (fileExists(reportFile)) {
+                def reportContent = readFile(reportFile)
+                
+                // Extract metrics
+                def criticalMatches = (reportContent =~ /CRITICAL: (\d+)/)
+                if (criticalMatches) {
+                    scanResults.criticalCount = criticalMatches[0][1] as Integer
+                }
+                
+                def totalMatches = (reportContent =~ /Total findings: (\d+)/)
+                if (totalMatches) {
+                    scanResults.totalFindings = totalMatches[0][1] as Integer
+                }
+                
+                echo "📊 Scan Results: ${scanResults.totalFindings} total findings, ${scanResults.criticalCount} critical"
+            } else {
+                echo '⚠️ Report file not found - scan may have failed'
+                scanResults.reportGenerated = false
+            }
+        }
+        
+        stage('Security Gate') {
+            echo '🚨 Applying security policies...'
+            
+            def securityGatePassed = true
+            
+            // Check critical vulnerability threshold
+            if (scanResults.criticalCount > 0) {
+                echo "🚨 Found ${scanResults.criticalCount} critical vulnerabilities"
+                
+                // Configurable threshold - fail build if too many critical issues
+                def criticalThreshold = params.CRITICAL_THRESHOLD?.toInteger() ?: 0
+                
+                if (scanResults.criticalCount > criticalThreshold) {
+                    securityGatePassed = false
+                    echo "❌ Critical vulnerability count (${scanResults.criticalCount}) exceeds threshold (${criticalThreshold})"
+                }
+            }
+            
+            scanResults.securityGatePassed = securityGatePassed
+            
+            if (!securityGatePassed) {
+                currentBuild.result = 'FAILURE'
+                error("Security gate failed - build terminated due to critical vulnerabilities")
+            } else {
+                echo '✅ Security gate passed'
+            }
+        }
+        
+        stage('Phoenix Integration Check') {
+            when {
+                expression { scanResults.phoenixEnabled }
+            }
+            
+            echo '🔗 Verifying Phoenix Security integration...'
+            
+            // Check if Phoenix debug files were created
+            def phoenixDebugFiles = sh(
+                returnStdout: true,
+                script: 'find debug -name "phoenix_*" 2>/dev/null | wc -l || echo "0"'
+            ).trim().toInteger()
+            
+            if (phoenixDebugFiles > 0) {
+                echo "✅ Phoenix integration successful - ${phoenixDebugFiles} debug files created"
+                scanResults.phoenixIntegrationSuccess = true
+            } else {
+                echo '⚠️ Phoenix integration may have failed - no debug files found'
+                scanResults.phoenixIntegrationSuccess = false
+                currentBuild.result = 'UNSTABLE'
+            }
+        }
+        
+    } catch (Exception e) {
+        echo "❌ Pipeline failed: ${e.getMessage()}"
+        scanResults.pipelineError = e.getMessage()
+        currentBuild.result = 'FAILURE'
+        throw e
+        
+    } finally {
+        stage('Cleanup & Reporting') {
+            scanResults.endTime = new Date()
+            scanResults.duration = scanResults.endTime.time - scanResults.startTime.time
+            
+            echo '📊 Generating final report...'
+            
+            // Create summary report
+            def summaryReport = """
+NPM Security Scan Summary - Build #${BUILD_NUMBER}
+================================================
+
+Build Information:
+- Build Number: ${BUILD_NUMBER}
+- Timestamp: ${buildTimestamp}
+- Duration: ${scanResults.duration}ms
+
+Scan Configuration:
+- Phoenix Integration: ${scanResults.phoenixEnabled ? 'Enabled' : 'Disabled'}
+- Quick Check: ${scanResults.quickCheckPassed ? 'Passed' : 'Failed'}
+- Scan Status: ${scanResults.scanPassed ? 'Passed' : 'Failed'}
+
+Security Findings:
+- Total Findings: ${scanResults.totalFindings ?: 'Unknown'}
+- Critical Vulnerabilities: ${scanResults.criticalCount ?: 0}
+- Security Gate: ${scanResults.securityGatePassed ? 'Passed' : 'Failed'}
+
+Phoenix Integration:
+- Status: ${scanResults.phoenixIntegrationSuccess ? 'Success' : 'Failed/Disabled'}
+
+Build Result: ${currentBuild.result ?: 'SUCCESS'}
+            """.stripIndent()
+            
+            writeFile file: 'jenkins-scan-summary.txt', text: summaryReport
+            
+            // Archive artifacts
+            archiveArtifacts(
+                artifacts: '**/*security-report*.txt, **/*scan-summary*.txt, result/**, debug/**',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
+            
+            // Send notifications
+            if (env.SLACK_WEBHOOK_URL) {
+                def slackMessage = """
+🛡️ NPM Security Scan Complete - Build #${BUILD_NUMBER}
+Result: ${currentBuild.result ?: 'SUCCESS'}
+Critical Vulnerabilities: ${scanResults.criticalCount ?: 0}
+Phoenix Integration: ${scanResults.phoenixEnabled ? 'Enabled' : 'Disabled'}
+Duration: ${scanResults.duration}ms
+                """.stripIndent()
+                
+                sh """
+                    curl -X POST -H 'Content-type: application/json' \\
+                    --data '{"text":"${slackMessage}"}' \\
+                    ${env.SLACK_WEBHOOK_URL}
+                """
+            }
+            
+            // Cleanup
+            sh '''
+                rm -f .config || true
+                find . -name "temp_*" -delete || true
+            '''
+            
+            echo "📋 Pipeline completed with result: ${currentBuild.result ?: 'SUCCESS'}"
+        }
+    }
+}
