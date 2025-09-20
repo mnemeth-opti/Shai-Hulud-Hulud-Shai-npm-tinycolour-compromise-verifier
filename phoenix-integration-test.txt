@@ -1,14 +1,15 @@
 ================================================================================
 ENHANCED NPM PACKAGE COMPROMISE DETECTION REPORT WITH PHOENIX INTEGRATION
 ================================================================================
-Scan completed: 2025-09-20 12:00:54
+Scan completed: 2025-09-20 13:48:50
 Files scanned: 0
-Total findings: 40
+Total findings: 20
+Phoenix assets created: 1
 
 SEVERITY SUMMARY:
 --------------------
-CRITICAL: 20
-INFO: 20
+CRITICAL: 17
+INFO: 3
 
 DETAILED FINDINGS:
 --------------------
@@ -152,142 +153,8 @@ DETAILED FINDINGS:
    📦 Type: devDependencies
    ⚠️  Compromised versions: 19.0.3, 19.0.4
 
-21. [INFO] Safe version detected: @things-factory/auth-base@9.0.42 (compromised: 9.0.43, 9.0.44, 9.0.45)
-   📁 Location: test_deep_dependencies/package.json
-   package: @things-factory/auth-base
-   safe_version: 9.0.42
-   ⚠️  Compromised versions: 9.0.43, 9.0.44, 9.0.45
-   📦 Type: dependencies
-
-22. [INFO] Safe version detected: @things-factory/integration-base@9.0.42 (compromised: 9.0.43, 9.0.44, 9.0.45)
-   📁 Location: test_deep_dependencies/package.json
-   package: @things-factory/integration-base
-   safe_version: 9.0.42
-   ⚠️  Compromised versions: 9.0.43, 9.0.44, 9.0.45
-   📦 Type: dependencies
-
-23. [INFO] Safe version detected: @things-factory/shell@9.0.42 (compromised: 9.0.43, 9.0.44, 9.0.45)
-   📁 Location: test_deep_dependencies/package.json
-   package: @things-factory/shell
-   safe_version: 9.0.42
-   ⚠️  Compromised versions: 9.0.43, 9.0.44, 9.0.45
-   📦 Type: dependencies
-
-24. [INFO] Safe version detected: @operato/utils@9.0.21 (compromised: 9.0.22, 9.0.35, 9.0.36, 9.0.37, 9.0.38, 9.0.39, 9.0.40, 9.0.41, 9.0.42, 9.0.43, 9.0.44, 9.0.45, 9.0.46, 9.0.47, 9.0.48, 9.0.49, 9.0.50, 9.0.51)
-   📁 Location: test_deep_dependencies/package.json
-   package: @operato/utils
-   safe_version: 9.0.21
-   ⚠️  Compromised versions: 9.0.22, 9.0.35, 9.0.36, 9.0.37, 9.0.38, 9.0.39, 9.0.40, 9.0.41, 9.0.42, 9.0.43, 9.0.44, 9.0.45, 9.0.46, 9.0.47, 9.0.48, 9.0.49, 9.0.50, 9.0.51
-   📦 Type: dependencies
-
-25. [CRITICAL] Compromised package detected: angulartics2@14.1.2
-   📁 Location: test_deep_dependencies/package.json
-   package: angulartics2
-   version: 14.1.2
-   📦 Type: dependencies
-   ⚠️  Compromised versions: 14.1.1, 14.1.2
-
-26. [INFO] Safe version detected: @ctrl/deluge@7.2.0 (compromised: 7.2.1, 7.2.2)
-   📁 Location: test_deep_dependencies/package.json
-   package: @ctrl/deluge
-   safe_version: 7.2.0
-   ⚠️  Compromised versions: 7.2.1, 7.2.2
-   📦 Type: devDependencies
-
-27. [INFO] Safe version detected: @ctrl/tinycolor@4.1.0 (compromised: 4.1.1, 4.1.2)
-   📁 Location: test_sample/package.json
-   package: @ctrl/tinycolor
-   safe_version: 4.1.0
-   ⚠️  Compromised versions: 4.1.1, 4.1.2
-   📦 Type: dependencies
-
-28. [INFO] Safe version detected: angulartics2@14.1.0 (compromised: 14.1.1, 14.1.2)
-   📁 Location: test_sample/package.json
-   package: angulartics2
-   safe_version: 14.1.0
-   ⚠️  Compromised versions: 14.1.1, 14.1.2
-   📦 Type: dependencies
-
-29. [INFO] Safe version detected: @nativescript-community/perms@3.0.4 (compromised: 3.0.5, 3.0.6, 3.0.7, 3.0.8, 3.0.9)
-   📁 Location: test_sample/package.json
-   package: @nativescript-community/perms
-   safe_version: 3.0.4
-   ⚠️  Compromised versions: 3.0.5, 3.0.6, 3.0.7, 3.0.8, 3.0.9
-   📦 Type: dependencies
-
-30. [INFO] Safe version detected: @operato/board@9.0.35 (compromised: 9.0.36, 9.0.37, 9.0.38, 9.0.39, 9.0.40, 9.0.41, 9.0.42, 9.0.43, 9.0.44, 9.0.45, 9.0.46, 9.0.47, 9.0.48, 9.0.49, 9.0.50, 9.0.51)
-   📁 Location: test_sample/package.json
-   package: @operato/board
-   safe_version: 9.0.35
-   ⚠️  Compromised versions: 9.0.36, 9.0.37, 9.0.38, 9.0.39, 9.0.40, 9.0.41, 9.0.42, 9.0.43, 9.0.44, 9.0.45, 9.0.46, 9.0.47, 9.0.48, 9.0.49, 9.0.50, 9.0.51
-   📦 Type: dependencies
-
-31. [INFO] Safe version detected: @operato/utils@9.0.21 (compromised: 9.0.22, 9.0.35, 9.0.36, 9.0.37, 9.0.38, 9.0.39, 9.0.40, 9.0.41, 9.0.42, 9.0.43, 9.0.44, 9.0.45, 9.0.46, 9.0.47, 9.0.48, 9.0.49, 9.0.50, 9.0.51)
-   📁 Location: test_sample/package.json
-   package: @operato/utils
-   safe_version: 9.0.21
-   ⚠️  Compromised versions: 9.0.22, 9.0.35, 9.0.36, 9.0.37, 9.0.38, 9.0.39, 9.0.40, 9.0.41, 9.0.42, 9.0.43, 9.0.44, 9.0.45, 9.0.46, 9.0.47, 9.0.48, 9.0.49, 9.0.50, 9.0.51
-   📦 Type: dependencies
-
-32. [INFO] Safe version detected: another-shai@1.0.0 (compromised: 1.0.1)
-   📁 Location: test_sample/package.json
-   package: another-shai
-   safe_version: 1.0.0
-   ⚠️  Compromised versions: 1.0.1
-   📦 Type: dependencies
-
-33. [INFO] Safe version detected: @things-factory/auth-base@9.0.42 (compromised: 9.0.43, 9.0.44, 9.0.45)
-   📁 Location: test_sample/package.json
-   package: @things-factory/auth-base
-   safe_version: 9.0.42
-   ⚠️  Compromised versions: 9.0.43, 9.0.44, 9.0.45
-   📦 Type: dependencies
-
-34. [INFO] Safe version detected: @things-factory/integration-base@9.0.42 (compromised: 9.0.43, 9.0.44, 9.0.45)
-   📁 Location: test_sample/package.json
-   package: @things-factory/integration-base
-   safe_version: 9.0.42
-   ⚠️  Compromised versions: 9.0.43, 9.0.44, 9.0.45
-   📦 Type: dependencies
-
-35. [CRITICAL] Compromised package detected: @ctrl/ngx-codemirror@7.0.1
-   📁 Location: test_sample/package.json
-   package: @ctrl/ngx-codemirror
-   version: 7.0.1
-   📦 Type: devDependencies
-   ⚠️  Compromised versions: 7.0.1, 7.0.2
-
-36. [CRITICAL] Compromised package detected: ngx-toastr@19.0.1
-   📁 Location: test_sample/package.json
-   package: ngx-toastr
-   version: 19.0.1
-   📦 Type: devDependencies
-   ⚠️  Compromised versions: 19.0.1, 19.0.2
-
-37. [INFO] Safe version detected: @rxap/ngx-bootstrap@19.0.2 (compromised: 19.0.3, 19.0.4)
-   📁 Location: test_sample/package.json
-   package: @rxap/ngx-bootstrap
-   safe_version: 19.0.2
-   ⚠️  Compromised versions: 19.0.3, 19.0.4
-   📦 Type: devDependencies
-
-38. [INFO] Safe version detected: eslint-config-teselagen@6.1.6 (compromised: 6.1.7)
-   📁 Location: test_sample/package.json
-   package: eslint-config-teselagen
-   safe_version: 6.1.6
-   ⚠️  Compromised versions: 6.1.7
-   📦 Type: devDependencies
-
-39. [INFO] Safe version detected: @nativescript-community/sentry@4.6.42 (compromised: 4.6.43)
-   📁 Location: test_sample/package.json
-   package: @nativescript-community/sentry
-   safe_version: 4.6.42
-   ⚠️  Compromised versions: 4.6.43
-   📦 Type: peerDependencies
-
-40. [INFO] Safe version detected: @teriyakibomb/ember-velcro@2.2.0 (compromised: 2.2.1)
-   📁 Location: test_sample/package.json
-   package: @teriyakibomb/ember-velcro
-   safe_version: 2.2.0
-   ⚠️  Compromised versions: 2.2.1
-   📦 Type: peerDependencies
+PHOENIX SECURITY INTEGRATION:
+------------------------------
+Assets created: 1
+Findings created: 20
+Import status: Enabled

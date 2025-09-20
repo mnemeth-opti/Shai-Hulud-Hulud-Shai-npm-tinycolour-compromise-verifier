@@ -1,179 +1,344 @@
-name: NPM Package Security Scan - 2025 Extended (195 Packages)
+name: NPM Security Compromise Detection
 
 on:
-  # Trigger on pushes to main branch
+  # Trigger on push to main branches
   push:
-    branches: [ main, master ]
+    branches: [ main, master, develop ]
   
   # Trigger on pull requests
   pull_request:
-    branches: [ main, master ]
-  
-  # Daily scan at 2 AM UTC
-  schedule:
-    - cron: '0 2 * * *'
+    branches: [ main, master, develop ]
   
   # Allow manual trigger
   workflow_dispatch:
+    inputs:
+      scan_type:
+        description: 'Type of scan to perform'
+        required: true
+        default: 'quick'
+        type: choice
+        options:
+        - quick
+        - enhanced
+        - light-scan
+        - phoenix-integration
+      target_path:
+        description: 'Path to scan (default: entire repository)'
+        required: false
+        default: '.'
+      enable_phoenix:
+        description: 'Enable Phoenix Security integration'
+        required: false
+        default: false
+        type: boolean
+  
+  # Schedule daily scans at 2 AM UTC
+  schedule:
+    - cron: '0 2 * * *'
+
+env:
+  # GitHub token for higher API rate limits (automatically provided)
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  # Phoenix API credentials (configure in repository secrets)
+  PHOENIX_CLIENT_ID: ${{ secrets.PHOENIX_CLIENT_ID }}
+  PHOENIX_CLIENT_SECRET: ${{ secrets.PHOENIX_CLIENT_SECRET }}
+  PHOENIX_API_URL: ${{ secrets.PHOENIX_API_URL }}
 
 jobs:
-  npm-security-scan:
-    name: Scan for 195 Compromised NPM Packages (2025 Extended)
+  # Quick security check job
+  quick-security-check:
+    name: Quick Security Check
     runs-on: ubuntu-latest
+    if: github.event.inputs.scan_type == 'quick' || github.event.inputs.scan_type == '' || github.event_name != 'workflow_dispatch'
     
     steps:
-    - name: Checkout Repository
+    - name: Checkout repository
       uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
       with:
-        node-version: '18'
-        cache: 'npm'
+        fetch-depth: 0  # Full history for better analysis
     
-    - name: Install jq
-      run: sudo apt-get update && sudo apt-get install -y jq
-    
-    - name: Download Security Tools
+    - name: Install dependencies
       run: |
-        # Replace 'your-username/your-repo' with your actual repository
-        REPO_URL="https://raw.githubusercontent.com/your-username/your-repo/main"
-        
-        curl -fsSL "$REPO_URL/quick-check-compromised-packages-2025.sh" -o quick-check.sh
-        curl -fsSL "$REPO_URL/npm_package_compromise_detector_2025.py" -o detector.py
-        curl -fsSL "$REPO_URL/compromised_packages_2025.json" -o compromised_packages.json
-        
-        chmod +x quick-check.sh
+        sudo apt-get update
+        sudo apt-get install -y jq curl
     
-    - name: Quick Security Check
-      id: quick-scan
+    - name: Make scripts executable
       run: |
-        echo "Running quick security scan..."
-        set +e  # Don't fail immediately
-        ./quick-check.sh .
-        SCAN_EXIT_CODE=$?
-        echo "scan_result=$SCAN_EXIT_CODE" >> $GITHUB_OUTPUT
-        exit $SCAN_EXIT_CODE
-      continue-on-error: true
+        chmod +x quick-check-compromised-packages-2025.sh
+        chmod +x local-security-check.sh
+        chmod +x enhanced-quick-check-with-phoenix.sh
     
-    - name: Comprehensive Security Analysis
-      if: steps.quick-scan.outputs.scan_result != '0'
+    - name: Run quick security check
+      id: quick_scan
       run: |
-        echo "Running comprehensive security analysis..."
-        python3 detector.py . --full-tree --output security-report.txt
+        echo "🔍 Running quick NPM compromise detection..."
+        ./quick-check-compromised-packages-2025.sh . || echo "SCAN_FAILED=true" >> $GITHUB_ENV
+        echo "SCAN_COMPLETED=true" >> $GITHUB_ENV
     
-    - name: Upload Security Report
-      if: steps.quick-scan.outputs.scan_result != '0'
+    - name: Upload scan results
+      if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: security-report-${{ github.run_number }}
-        path: security-report.txt
+        name: quick-scan-results
+        path: |
+          *.txt
+          *.json
         retention-days: 30
     
-    - name: Comment on PR (Compromised Packages Found)
-      if: steps.quick-scan.outputs.scan_result != '0' && github.event_name == 'pull_request'
+    - name: Comment on PR (if scan finds issues)
+      if: github.event_name == 'pull_request' && env.SCAN_FAILED == 'true'
       uses: actions/github-script@v7
       with:
         script: |
-          const fs = require('fs');
-          let reportContent = '';
-          
-          try {
-            reportContent = fs.readFileSync('security-report.txt', 'utf8');
-            // Extract just the summary for the comment
-            const lines = reportContent.split('\n');
-            const summaryStart = lines.findIndex(line => line.includes('SEVERITY SUMMARY'));
-            const summaryEnd = lines.findIndex((line, index) => index > summaryStart && line.includes('DETAILED FINDINGS'));
-            
-            if (summaryStart !== -1 && summaryEnd !== -1) {
-              reportContent = lines.slice(summaryStart, summaryEnd).join('\n');
-            }
-          } catch (error) {
-            reportContent = 'Security report not available. Check the workflow logs.';
-          }
-          
-          const comment = `## 🚨 Security Alert: Compromised NPM Packages Detected
-          
-          **CRITICAL**: This pull request contains or depends on compromised NPM packages from our database of **195 confirmed compromised packages**.
-          
-          **🎯 Organizations Affected**: @ctrl, @nativescript-community, @art-ws, @crowdstrike, @operato, @teselagen, @things-factory, and others.
-          
-          ### Summary
-          \`\`\`
-          ${reportContent}
-          \`\`\`
-          
-          ### Immediate Actions Required:
-          1. 🛑 **DO NOT MERGE** this pull request
-          2. 🧹 Clear npm cache: \`npm cache clean --force\`
-          3. 🗑️ Remove node_modules: \`rm -rf node_modules\`
-          4. 📋 Check the detailed security report in the workflow artifacts
-          5. 🔄 Update to safe package versions (auto-generated in report)
-          6. ✅ Re-run security scan after fixes
-          
-          **Detailed Report**: Download the \`security-report-${{ github.run_number }}\` artifact from this workflow run for complete safe version recommendations.
-          `;
-          
           github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: comment
-          });
+            body: '🚨 **NPM Security Alert**: Compromised packages detected! Please review the security scan results in the workflow artifacts.'
+          })
+
+  # Enhanced security analysis job
+  enhanced-security-analysis:
+    name: Enhanced Security Analysis
+    runs-on: ubuntu-latest
+    if: github.event.inputs.scan_type == 'enhanced' || github.event.inputs.scan_type == 'phoenix-integration'
     
-    - name: Create Issue (Scheduled Scan)
-      if: steps.quick-scan.outputs.scan_result != '0' && github.event_name == 'schedule'
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests configparser
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jq curl
+    
+    - name: Make scripts executable
+      run: |
+        chmod +x enhanced-quick-check-with-phoenix.sh
+        chmod +x quick-check-compromised-packages-2025.sh
+    
+    - name: Create Phoenix configuration (if Phoenix enabled)
+      if: github.event.inputs.enable_phoenix == 'true' || github.event.inputs.scan_type == 'phoenix-integration'
+      run: |
+        if [ -n "$PHOENIX_CLIENT_ID" ] && [ -n "$PHOENIX_CLIENT_SECRET" ] && [ -n "$PHOENIX_API_URL" ]; then
+          echo "Creating Phoenix configuration..."
+          cat > .config << EOF
+        [phoenix]
+        client_id = $PHOENIX_CLIENT_ID
+        client_secret = $PHOENIX_CLIENT_SECRET
+        api_base_url = $PHOENIX_API_URL
+        assessment_name = NPM Compromise Detection - GitHub Actions
+        import_type = new
+        EOF
+          echo "PHOENIX_CONFIGURED=true" >> $GITHUB_ENV
+        else
+          echo "⚠️ Phoenix credentials not configured in repository secrets"
+          echo "PHOENIX_CONFIGURED=false" >> $GITHUB_ENV
+        fi
+    
+    - name: Run enhanced analysis with Phoenix
+      if: env.PHOENIX_CONFIGURED == 'true'
+      run: |
+        echo "🚀 Running enhanced analysis with Phoenix integration..."
+        python3 enhanced_npm_compromise_detector_phoenix.py \
+          ${{ github.event.inputs.target_path || '.' }} \
+          --enable-phoenix \
+          --output "github-actions-security-report.txt" \
+          --organize-folders \
+          --debug
+    
+    - name: Run enhanced analysis (local only)
+      if: env.PHOENIX_CONFIGURED != 'true'
+      run: |
+        echo "🔍 Running enhanced analysis (local report only)..."
+        python3 enhanced_npm_compromise_detector_phoenix.py \
+          ${{ github.event.inputs.target_path || '.' }} \
+          --output "github-actions-security-report.txt" \
+          --organize-folders
+    
+    - name: Upload analysis results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: enhanced-analysis-results
+        path: |
+          result/
+          debug/
+          github-actions-security-report.txt
+          *.txt
+          *.json
+        retention-days: 30
+    
+    - name: Create security summary
+      if: always()
+      run: |
+        echo "## 🛡️ NPM Security Scan Results" >> $GITHUB_STEP_SUMMARY
+        echo "### Scan Configuration" >> $GITHUB_STEP_SUMMARY
+        echo "- **Scan Type**: Enhanced Analysis" >> $GITHUB_STEP_SUMMARY
+        echo "- **Target**: ${{ github.event.inputs.target_path || 'Entire repository' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Phoenix Integration**: ${{ env.PHOENIX_CONFIGURED }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Timestamp**: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "github-actions-security-report.txt" ]; then
+          echo "### Scan Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          head -20 github-actions-security-report.txt >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📄 Full report available in workflow artifacts" >> $GITHUB_STEP_SUMMARY
+        fi
+
+  # Light scan job for repository monitoring
+  light-scan:
+    name: Light Scan (NPM Files Only)
+    runs-on: ubuntu-latest
+    if: github.event.inputs.scan_type == 'light-scan'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests configparser
+    
+    - name: Create repository list for current repo
+      run: |
+        echo "${{ github.server_url }}/${{ github.repository }}" > current_repo.txt
+    
+    - name: Run light scan
+      run: |
+        echo "🪶 Running light scan on current repository..."
+        python3 enhanced_npm_compromise_detector_phoenix.py \
+          --repo-list current_repo.txt \
+          --light-scan \
+          --output "light-scan-report.txt" \
+          --organize-folders
+    
+    - name: Upload light scan results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: light-scan-results
+        path: |
+          result/
+          light-scan-report.txt
+          github-pull/
+        retention-days: 30
+
+  # Security gate job - fails if critical vulnerabilities found
+  security-gate:
+    name: Security Gate
+    runs-on: ubuntu-latest
+    needs: [quick-security-check, enhanced-security-analysis, light-scan]
+    if: always()
+    
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        merge-multiple: true
+    
+    - name: Check for critical findings
+      run: |
+        echo "🔍 Checking for critical security findings..."
+        
+        CRITICAL_FOUND=false
+        
+        # Check for critical findings in any report files
+        for report in *.txt; do
+          if [ -f "$report" ]; then
+            if grep -q "CRITICAL\|🚨\|Compromised package detected" "$report"; then
+              echo "❌ Critical security issues found in $report"
+              CRITICAL_FOUND=true
+            fi
+          fi
+        done
+        
+        if [ "$CRITICAL_FOUND" = "true" ]; then
+          echo "SECURITY_GATE_FAILED=true" >> $GITHUB_ENV
+          echo "## 🚨 Security Gate: FAILED" >> $GITHUB_STEP_SUMMARY
+          echo "Critical security vulnerabilities detected. Please review the scan results." >> $GITHUB_STEP_SUMMARY
+        else
+          echo "SECURITY_GATE_FAILED=false" >> $GITHUB_ENV
+          echo "## ✅ Security Gate: PASSED" >> $GITHUB_STEP_SUMMARY
+          echo "No critical security vulnerabilities detected." >> $GITHUB_STEP_SUMMARY
+        fi
+    
+    - name: Fail workflow if critical issues found
+      if: env.SECURITY_GATE_FAILED == 'true'
+      run: |
+        echo "🚨 Security gate failed due to critical vulnerabilities"
+        exit 1
+
+  # Notification job
+  notify:
+    name: Send Notifications
+    runs-on: ubuntu-latest
+    needs: [security-gate]
+    if: always() && (github.event_name == 'schedule' || github.event_name == 'push')
+    
+    steps:
+    - name: Send Slack notification (if configured)
+      if: env.SECURITY_GATE_FAILED == 'true' && secrets.SLACK_WEBHOOK_URL
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        text: |
+          🚨 NPM Security Alert: Critical vulnerabilities detected in ${{ github.repository }}
+          Branch: ${{ github.ref }}
+          Commit: ${{ github.sha }}
+          Please review the security scan results immediately.
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    
+    - name: Create GitHub Issue (if critical findings and scheduled run)
+      if: env.SECURITY_GATE_FAILED == 'true' && github.event_name == 'schedule'
       uses: actions/github-script@v7
       with:
         script: |
-          const title = `🚨 Security Alert: Compromised NPM Packages Detected (${new Date().toISOString().split('T')[0]})`;
-          const body = `## Critical Security Issue - 195 Package Database
-          
-          Our scheduled security scan has detected compromised NPM packages in the repository from our database of **195 confirmed compromised packages**.
-          
-          **Scan Date**: ${new Date().toISOString()}
-          **Repository**: ${{ github.repository }}
-          **Branch**: ${{ github.ref_name }}
-          **Coverage**: 195 packages across 11+ major organizations
-          
-          ### Organizations Potentially Affected:
-          - @ctrl, @nativescript-community, @art-ws, @crowdstrike
-          - @operato, @teselagen, @things-factory, @nstudio
-          - Plus 100+ individual packages
-          
-          ### Immediate Actions Required:
-          1. Review the detailed security report in workflow artifacts
-          2. Update compromised packages to safe versions (auto-generated recommendations)
-          3. Clear npm cache and reinstall dependencies
-          4. Verify no malicious code has been executed
-          5. Check for cryptocurrency wallet files and sensitive data exposure
-          
-          ### Security Report
-          Download the security report from the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for complete safe version recommendations.
-          
-          **Priority**: CRITICAL
-          **Labels**: security, npm, supply-chain
-          `;
-          
           github.rest.issues.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            title: title,
-            body: body,
-            labels: ['security', 'critical', 'npm']
-          });
-    
-    - name: Fail Workflow if Compromised Packages Found
-      if: steps.quick-scan.outputs.scan_result != '0'
-      run: |
-        echo "❌ Workflow failed: Compromised NPM packages detected"
-        echo "Check the security report artifact for detailed information"
-        exit 1
-    
-    - name: Success Message
-      if: steps.quick-scan.outputs.scan_result == '0'
-      run: |
-        echo "✅ Security scan passed: No compromised packages detected"
-        echo "Your NPM dependencies are clean of all 195 monitored compromised packages"
-        echo "Scanned organizations: @ctrl, @nativescript-community, @art-ws, @crowdstrike, and 7+ others"
-
+            title: '🚨 NPM Security Alert: Critical Vulnerabilities Detected',
+            body: `## NPM Security Scan Alert
+            
+            Critical NPM package vulnerabilities have been detected in the scheduled security scan.
+            
+            **Details:**
+            - Repository: ${context.repo.owner}/${context.repo.repo}
+            - Branch: ${context.ref}
+            - Scan Date: ${new Date().toISOString()}
+            - Workflow Run: ${context.runNumber}
+            
+            **Action Required:**
+            1. Review the security scan results in the [workflow artifacts](${context.payload.repository.html_url}/actions/runs/${context.runId})
+            2. Update or remove compromised packages immediately
+            3. Test your application thoroughly after updates
+            
+            **Artifacts:**
+            Check the workflow run for detailed security reports and recommendations.
+            
+            This issue was created automatically by the NPM Security Scanner.`,
+            labels: ['security', 'critical', 'npm-vulnerability']
+          })

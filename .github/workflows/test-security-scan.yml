@@ -1,0 +1,114 @@
+name: Test Security Scan
+
+# Simple test workflow for validating the security scanner setup
+on:
+  workflow_dispatch:
+    inputs:
+      test_folder:
+        description: 'Test folder to scan'
+        required: false
+        default: 'test_compromised_packages'
+        type: choice
+        options:
+        - test_compromised_packages
+        - test_deep_dependencies  
+        - test_sample
+
+jobs:
+  test-scan:
+    name: Test Security Scanner
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests configparser
+        sudo apt-get update
+        sudo apt-get install -y jq
+    
+    - name: Make scripts executable
+      run: |
+        chmod +x *.sh
+        ls -la *.sh
+    
+    - name: Test quick check script
+      run: |
+        echo "🧪 Testing quick check script..."
+        ./quick-check-compromised-packages-2025.sh ${{ github.event.inputs.test_folder }}
+      continue-on-error: true
+    
+    - name: Test Python detector
+      run: |
+        echo "🧪 Testing Python detector..."
+        python3 enhanced_npm_compromise_detector_phoenix.py \
+          ${{ github.event.inputs.test_folder }} \
+          --output "test-scan-results.txt" \
+          --quiet
+      continue-on-error: true
+    
+    - name: Test enhanced script
+      run: |
+        echo "🧪 Testing enhanced shell script..."
+        ./enhanced-quick-check-with-phoenix.sh ${{ github.event.inputs.test_folder }}
+      continue-on-error: true
+    
+    - name: Show results
+      if: always()
+      run: |
+        echo "📊 Test Results Summary:"
+        echo "======================"
+        
+        if [ -f "test-scan-results.txt" ]; then
+          echo "✅ Python detector report generated"
+          echo "First 10 lines of report:"
+          head -10 test-scan-results.txt
+        else
+          echo "❌ No Python detector report found"
+        fi
+        
+        echo ""
+        echo "📁 Files created during test:"
+        ls -la *.txt 2>/dev/null || echo "No .txt files found"
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-scan-results
+        path: |
+          *.txt
+          *.json
+          result/
+          debug/
+        retention-days: 7
+    
+    - name: Test summary
+      if: always()
+      run: |
+        echo "## 🧪 Security Scanner Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "### Configuration" >> $GITHUB_STEP_SUMMARY
+        echo "- **Test Folder**: ${{ github.event.inputs.test_folder }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Python Version**: $(python3 --version)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Timestamp**: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "test-scan-results.txt" ]; then
+          echo "### Scan Results Preview" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          head -15 test-scan-results.txt >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "### ⚠️ No scan results generated" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📎 Full test results available in workflow artifacts" >> $GITHUB_STEP_SUMMARY
