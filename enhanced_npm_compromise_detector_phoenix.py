@@ -46,6 +46,14 @@ class EnhancedNPMCompromiseDetectorPhoenix:
         self.phoenix_findings = []  # Findings to be imported to Phoenix
         self.debug_mode = False  # Debug mode flag
         
+        # Enhanced tracking for comprehensive reporting
+        self.cloned_repositories = []  # Track repositories that were cloned
+        self.found_repositories = []   # Track repositories that were found locally
+        self.processed_repositories = []  # Track all processed repositories with details
+        self.all_scanned_libraries = []  # Track all libraries found during scan
+        self.clean_libraries = []     # Track clean libraries
+        self.compromised_libraries = []  # Track compromised libraries
+        
         self.dependency_stats = {
             'direct_dependencies': 0,
             'transitive_dependencies': 0,
@@ -476,10 +484,12 @@ github_token = your_github_token_here
                 return True
             else:
                 print(f"❌ Failed to import to Phoenix: {response.status_code} - {response.text}")
+                print(f"📄 Continuing with local security report generation...")
                 return False
                 
         except Exception as e:
             print(f"❌ Error importing to Phoenix: {str(e)}")
+            print(f"📄 Continuing with local security report generation...")
             return False
     
     def _save_debug_payload(self, payload: Dict[str, Any]):
@@ -756,6 +766,9 @@ github_token = your_github_token_here
 
     def process_package_file(self, file_path: str, repo_url: str = None) -> Dict:
         """Process a single package file and create Phoenix asset with findings"""
+        # Track this file as scanned
+        self.scanned_files.append(file_path)
+        
         # Extract repository URL if not provided
         if not repo_url:
             repo_url = self.get_repo_url_from_path(file_path)
@@ -1060,14 +1073,18 @@ github_token = your_github_token_here
             
         return None, None
         
-    def get_github_api_headers(self) -> Dict[str, str]:
-        """Get headers for GitHub API requests"""
+    def get_github_api_headers(self, use_auth: bool = True) -> Dict[str, str]:
+        """Get headers for GitHub API requests
+        
+        Args:
+            use_auth: Whether to include authentication. Set to False for public repo fallback.
+        """
         headers = {
             'Accept': 'application/vnd.github.v3+json',
             'User-Agent': 'Shai-Halud-NPM-Security-Scanner/1.0'
         }
         
-        if self.github_token:
+        if use_auth and self.github_token and self.github_token != 'your_github_token_here':
             headers['Authorization'] = f'token {self.github_token}'
             
         return headers
@@ -1091,7 +1108,7 @@ github_token = your_github_token_here
         return npm_files
         
     def _search_github_api(self, owner: str, repo: str) -> List[Dict]:
-        """Search for NPM files using GitHub API"""
+        """Search for NPM files using GitHub API with authentication fallback"""
         npm_files = []
         
         # Search for package.json files
@@ -1101,7 +1118,11 @@ github_token = your_github_token_here
             'filename:yarn.lock'
         ]
         
-        headers = self.get_github_api_headers()
+        # Try with authentication first (if token is available and valid)
+        use_auth = self.github_token and self.github_token != 'your_github_token_here'
+        headers = self.get_github_api_headers(use_auth=use_auth)
+        
+        auth_failed = False
         
         for query in search_queries:
             url = f"https://api.github.com/search/code"
@@ -1122,15 +1143,58 @@ github_token = your_github_token_here
                         'url': item['url'],
                         'type': self._get_file_type(item['name'])
                     })
+            elif response.status_code == 401 and use_auth:
+                print(f"⚠️  GitHub API authentication failed, trying without authentication for public repository...")
+                auth_failed = True
+                break
             elif response.status_code == 403:
-                print(f"⚠️  GitHub API rate limit exceeded. Consider setting GITHUB_TOKEN environment variable")
+                if use_auth:
+                    print(f"⚠️  GitHub API rate limit exceeded with authentication")
+                else:
+                    print(f"⚠️  GitHub API rate limit exceeded. Consider setting a valid GITHUB_TOKEN environment variable")
                 break
             elif response.status_code == 422:
                 print(f"⚠️  GitHub API search not available for this repository (private/empty)")
                 break
             else:
                 print(f"⚠️  GitHub API search failed: {response.status_code}")
+                if use_auth and response.status_code == 401:
+                    auth_failed = True
                 break
+        
+        # If authentication failed, try again without authentication for public repositories
+        if auth_failed and use_auth:
+            print(f"🔄 Retrying without authentication for public repository access...")
+            headers_no_auth = self.get_github_api_headers(use_auth=False)
+            
+            for query in search_queries:
+                url = f"https://api.github.com/search/code"
+                params = {
+                    'q': f'{query} repo:{owner}/{repo}',
+                    'per_page': 100
+                }
+                
+                response = requests.get(url, headers=headers_no_auth, params=params, timeout=30)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    for item in data.get('items', []):
+                        npm_files.append({
+                            'name': item['name'],
+                            'path': item['path'],
+                            'download_url': item.get('download_url'),
+                            'url': item['url'],
+                            'type': self._get_file_type(item['name'])
+                        })
+                elif response.status_code == 403:
+                    print(f"⚠️  GitHub API rate limit exceeded (unauthenticated)")
+                    break
+                elif response.status_code == 422:
+                    print(f"⚠️  Repository not accessible or empty")
+                    break
+                else:
+                    print(f"⚠️  GitHub API search failed without auth: {response.status_code}")
+                    break
                 
         return npm_files
         
@@ -1149,7 +1213,9 @@ github_token = your_github_token_here
             'src/package.json'
         ]
         
-        headers = self.get_github_api_headers()
+        # Try without authentication first for public repositories
+        use_auth = self.github_token and self.github_token != 'your_github_token_here'
+        headers = self.get_github_api_headers(use_auth=False)  # Start without auth for public repos
         
         for path in common_paths:
             try:
@@ -1430,7 +1496,21 @@ github_token = your_github_token_here
         # Extract repository name from URL
         repo_name = repo_url.split('/')[-1].replace('.git', '')
         
-        # Check if repository exists locally
+        # If organized folders is enabled, prioritize the organized location
+        if self.organize_folders:
+            organized_path = os.path.join(self.github_pull_dir, repo_name)
+            if os.path.exists(organized_path) and os.path.isdir(organized_path):
+                print(f"✅ Found repository in organized folder: {organized_path}")
+                # Track found repository
+                self.found_repositories.append({
+                    'url': repo_url,
+                    'name': repo_name,
+                    'local_path': organized_path,
+                    'source': 'organized_folder'
+                })
+                return organized_path
+        
+        # Check if repository exists locally in other locations
         possible_paths = [
             f"./repos/{repo_name}",
             f"../{repo_name}",
@@ -1441,10 +1521,24 @@ github_token = your_github_token_here
         for path in possible_paths:
             if os.path.exists(path) and os.path.isdir(path):
                 print(f"✅ Found local repository: {path}")
+                # Track found repository
+                self.found_repositories.append({
+                    'url': repo_url,
+                    'name': repo_name,
+                    'local_path': path,
+                    'source': 'existing_local'
+                })
                 return path
                 
-        # Try to clone the repository
-        clone_path = f"/tmp/{repo_name}"
+        # Determine clone path based on organization settings
+        if self.organize_folders:
+            # Use organized github-pull folder structure
+            clone_path = os.path.join(self.github_pull_dir, repo_name)
+            os.makedirs(os.path.dirname(clone_path), exist_ok=True)
+        else:
+            # Default to /tmp for backward compatibility
+            clone_path = f"/tmp/{repo_name}"
+            
         try:
             print(f"📥 Cloning repository to {clone_path}")
             result = subprocess.run(
@@ -1456,6 +1550,13 @@ github_token = your_github_token_here
             
             if result.returncode == 0:
                 print(f"✅ Successfully cloned repository")
+                # Track cloned repository
+                self.cloned_repositories.append({
+                    'url': repo_url,
+                    'name': repo_name,
+                    'local_path': clone_path,
+                    'source': 'organized_folder' if self.organize_folders else 'tmp_folder'
+                })
                 return clone_path
             else:
                 print(f"❌ Failed to clone repository: {result.stderr}")
@@ -1472,11 +1573,56 @@ github_token = your_github_token_here
         report_lines.append("ENHANCED NPM PACKAGE COMPROMISE DETECTION REPORT WITH PHOENIX INTEGRATION")
         report_lines.append("=" * 80)
         report_lines.append(f"Scan completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        
+        # Enhanced scan statistics
+        report_lines.append("")
+        report_lines.append("SCAN STATISTICS:")
+        report_lines.append("-" * 20)
         report_lines.append(f"Files scanned: {len(self.scanned_files)}")
+        report_lines.append(f"Total packages scanned: {len(self.scanned_packages)}")
+        report_lines.append(f"Clean packages found: {len(self.safe_packages)}")
         report_lines.append(f"Total findings: {len(self.findings)}")
         
+        if self.light_scan_mode:
+            report_lines.append(f"Scan mode: Light scan (NPM files only)")
+        else:
+            report_lines.append(f"Scan mode: Full repository scan")
+            
+        if self.organize_folders:
+            report_lines.append(f"Repository storage: {self.github_pull_dir}")
+            report_lines.append(f"Results directory: {self.result_dir}")
+            
         if self.enable_phoenix_import:
             report_lines.append(f"Phoenix assets created: {len(self.phoenix_assets)}")
+            
+        # Detailed scan information
+        if self.scanned_files:
+            report_lines.append("")
+            report_lines.append("FILES SCANNED:")
+            report_lines.append("-" * 20)
+            for i, file_path in enumerate(self.scanned_files, 1):
+                # Show relative path if possible
+                display_path = file_path
+                if os.path.isabs(file_path):
+                    try:
+                        display_path = os.path.relpath(file_path)
+                    except:
+                        display_path = file_path
+                report_lines.append(f"{i:2d}. {display_path}")
+                
+        # Repository information
+        unique_repos = set()
+        for finding in self.findings:
+            repo_url = finding.get('repo_url')
+            if repo_url and repo_url != 'unknown':
+                unique_repos.add(repo_url)
+        
+        if unique_repos:
+            report_lines.append("")
+            report_lines.append("REPOSITORIES SCANNED:")
+            report_lines.append("-" * 20)
+            for i, repo_url in enumerate(sorted(unique_repos), 1):
+                report_lines.append(f"{i:2d}. {repo_url}")
             
         report_lines.append("")
         

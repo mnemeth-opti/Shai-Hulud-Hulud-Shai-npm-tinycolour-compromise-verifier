@@ -54,3 +54,4 @@ test_temp_*
 # Rich text format files (may contain sensitive data)
 *.rtf
 /__pycache__
+/github-pull
