@@ -35,8 +35,11 @@ chmod +x *.sh
 # 3. Check specific project
 ./local-security-check.sh /path/to/your/project
 
-# 4. Comprehensive analysis with detailed report
-python3 npm_package_compromise_detector_2025.py . --full-tree --output security-report.txt
+# 4. Comprehensive analysis with detailed report (all libraries shown)
+python3 enhanced_npm_compromise_detector_phoenix.py . --full-tree --detail-log --output security-report.txt
+
+# 5. Enterprise batch scan with Phoenix integration and cleanup
+python3 enhanced_npm_compromise_detector_phoenix.py --repo-list repos.txt --light-scan --organize-folders --delete-local-files --enable-phoenix
 ```
 
 ### **🔍 What Each Tool Does (195 Package Coverage)**
@@ -45,6 +48,9 @@ python3 npm_package_compromise_detector_2025.py . --full-tree --output security-
 |------|---------|-------|----------|----------|
 | `./local-security-check.sh` | **Quick scanner with nice output** | ⚡ Fast | Daily checks, CI/CD | 195 packages + organizations |
 | `./quick-check-compromised-packages-2025.sh` | **Core detection engine** | ⚡ Fast | Direct usage, automation | 195 packages with specific versions |
+| `enhanced_npm_compromise_detector_phoenix.py --detail-log` | **📋 Complete library reporting** | ⚡ Fast | **Audit-ready detailed scans** | 195 packages + all libraries shown |
+| `enhanced_npm_compromise_detector_phoenix.py --delete-local-files` | **🗑️ Auto-cleanup scanner** | ⚡ Fast | **CI/CD clean environments** | 195 packages + automatic cleanup |
+| `enhanced_npm_compromise_detector_phoenix.py --light-scan` | **🪶 Light Phoenix scanner** | ⚡⚡ Very Fast | **Enterprise batch scanning** | 195 packages + zero storage |
 | `python3 npm_package_compromise_detector_2025.py` | **Comprehensive analysis** | 🐌 Thorough | Security audits, reports | 195 packages + source code analysis |
 
 ### **📊 Understanding Results**
@@ -124,6 +130,81 @@ done
 # In your build script
 ./local-security-check.sh . || exit 1  # Fail build if compromised
 ```
+
+## 🆕 Enhanced Features (2025)
+
+### **📋 Detail Log Mode - Complete Library Visibility**
+
+Show ALL libraries without truncation for complete audit trails:
+
+```bash
+# Show every single library (no "... and 50 more" truncation)
+python3 enhanced_npm_compromise_detector_phoenix.py --folders my_projects --detail-log --output complete-audit.txt
+
+# Enterprise repository scan with complete library details
+python3 enhanced_npm_compromise_detector_phoenix.py --repo-list enterprise_repos.txt --detail-log --enable-phoenix
+
+# Before deployment - see every library scanned
+python3 enhanced_npm_compromise_detector_phoenix.py . --full-tree --detail-log --output pre-deploy-complete.txt
+```
+
+**Perfect for:**
+- ✅ **Security Audits**: Complete visibility for compliance
+- ✅ **Enterprise Reporting**: No truncated library lists
+- ✅ **Vulnerability Management**: See every single dependency
+- ✅ **Repository Context**: Each library shows source repo and build file
+
+### **🗑️ Auto-Cleanup Mode - Clean CI/CD Environments**
+
+Automatically delete cloned repositories after scanning:
+
+```bash
+# CI/CD pipeline scan with automatic cleanup
+python3 enhanced_npm_compromise_detector_phoenix.py --repo-list repos.txt --organize-folders --delete-local-files
+
+# Enterprise batch scan - no leftover files
+python3 enhanced_npm_compromise_detector_phoenix.py \
+  --repo-list organization_repos.txt \
+  --light-scan \
+  --organize-folders \
+  --delete-local-files \
+  --enable-phoenix
+
+# Local development with cleanup
+python3 enhanced_npm_compromise_detector_phoenix.py --repo-list test_repos.txt --delete-local-files --output scan-results.txt
+```
+
+**Perfect for:**
+- ✅ **CI/CD Pipelines**: No disk space accumulation
+- ✅ **Automated Scans**: Clean environments after each run
+- ✅ **Enterprise Scale**: Scan hundreds of repos without storage issues
+- ✅ **Development Workflows**: Keep local machine clean
+
+### **🔄 Ultimate Combined Usage**
+
+Use all enhanced features together:
+
+```bash
+# Complete enterprise security audit with all features
+python3 enhanced_npm_compromise_detector_phoenix.py \
+  --repo-list enterprise_repos.txt \
+  --light-scan \
+  --organize-folders \
+  --delete-local-files \
+  --detail-log \
+  --enable-phoenix \
+  --debug \
+  --output "enterprise-security-audit-$(date +%Y%m%d).txt"
+```
+
+**This command provides:**
+- 🪶 **Light Scan**: 10x faster scanning (NPM files only)
+- 🗂️ **Organized Folders**: Clean folder structure by date
+- 🗑️ **Auto Cleanup**: No leftover cloned repositories
+- 📋 **Complete Details**: Every library shown with repo context
+- 🔗 **Phoenix Integration**: Automated vulnerability management
+- 🐛 **Debug Mode**: API payloads saved for troubleshooting
+- 📊 **Comprehensive Report**: Complete audit trail
 
 ## 🖥️ Local Usage
 

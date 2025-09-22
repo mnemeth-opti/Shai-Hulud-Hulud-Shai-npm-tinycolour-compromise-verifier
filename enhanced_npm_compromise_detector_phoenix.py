@@ -1572,11 +1572,12 @@ github_token = your_github_token_here
                 return organized_path
         
         # Check if repository exists locally in other locations
+        # By default, prioritize organized structure and avoid /tmp
         possible_paths = [
             f"./repos/{repo_name}",
             f"../{repo_name}",
-            f"../../{repo_name}",
-            f"/tmp/{repo_name}"
+            f"../../{repo_name}"
+            # /tmp is no longer checked by default - use organized structure instead
         ]
         
         for path in possible_paths:
@@ -1591,14 +1592,10 @@ github_token = your_github_token_here
                 })
                 return path
                 
-        # Determine clone path based on organization settings
-        if self.organize_folders:
-            # Use organized github-pull folder structure
-            clone_path = os.path.join(self.github_pull_dir, repo_name)
-            os.makedirs(os.path.dirname(clone_path), exist_ok=True)
-        else:
-            # Default to /tmp for backward compatibility
-            clone_path = f"/tmp/{repo_name}"
+        # Determine clone path - use organized structure by default
+        # Always use organized github-pull folder structure for better organization
+        clone_path = os.path.join(self.github_pull_dir, repo_name)
+        os.makedirs(os.path.dirname(clone_path), exist_ok=True)
             
         try:
             print(f"📥 Cloning repository to {clone_path}")
