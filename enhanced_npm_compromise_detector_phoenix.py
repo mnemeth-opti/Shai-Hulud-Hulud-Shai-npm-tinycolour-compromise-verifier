@@ -882,10 +882,28 @@ github_token = your_github_token_here
                     for package_name, version in package_data[dep_type].items():
                         clean_version = self.normalize_version(version)
                         
+                        # Track all scanned libraries
+                        library_info = {
+                            'name': package_name,
+                            'version': version,
+                            'clean_version': clean_version,
+                            'type': dep_type,
+                            'file': file_path,
+                            'status': 'clean',  # Default to clean, will be updated if compromised
+                            'repo_url': self.get_repo_url_from_path(file_path) if hasattr(self, 'get_repo_url_from_path') else 'unknown'
+                        }
+                        self.all_scanned_libraries.append(library_info)
+                        
                         # Check if package is compromised
                         is_compromised, severity, compromised_versions = self.check_package_compromise(package_name, clean_version)
                         
                         if is_compromised or (package_name in self.compromised_packages):
+                            # Update status to compromised
+                            library_info['status'] = 'compromised'
+                            library_info['severity'] = severity
+                            library_info['compromised_versions'] = compromised_versions
+                            self.compromised_libraries.append(library_info.copy())
+                            
                             findings.append({
                                 'package': package_name,
                                 'version': version,
@@ -894,34 +912,37 @@ github_token = your_github_token_here
                                 'severity': severity,
                                 'compromised_versions': compromised_versions
                             })
+                        else:
+                            # This is a clean library
+                            self.clean_libraries.append(library_info.copy())
                             
-                            # Log finding
-                            if severity == 'CRITICAL':
-                                self.log_finding(
-                                    'CRITICAL',
-                                    f'Compromised package detected: {package_name}@{version}',
-                                    file_path,
-                                    {
-                                        'package': package_name,
-                                        'version': version,
-                                        'dependency_type': dep_type,
-                                        'compromised_versions': compromised_versions
-                                    }
-                                )
-                                self.dependency_stats['compromised_packages_found'] += 1
-                            elif severity == 'INFO':
-                                self.log_finding(
-                                    'INFO',
-                                    f'Safe version detected: {package_name}@{version} (compromised: {", ".join(compromised_versions)})',
-                                    file_path,
-                                    {
-                                        'package': package_name,
-                                        'safe_version': version,
-                                        'compromised_versions': compromised_versions,
-                                        'dependency_type': dep_type
-                                    }
-                                )
-                                self.dependency_stats['safe_packages_found'] += 1
+                        # Log finding (for compromised packages only)
+                        if is_compromised and severity == 'CRITICAL':
+                            self.log_finding(
+                                'CRITICAL',
+                                f'Compromised package detected: {package_name}@{version}',
+                                file_path,
+                                {
+                                    'package': package_name,
+                                    'version': version,
+                                    'dependency_type': dep_type,
+                                    'compromised_versions': compromised_versions
+                                }
+                            )
+                            self.dependency_stats['compromised_packages_found'] += 1
+                        elif is_compromised and severity == 'INFO':
+                            self.log_finding(
+                                'INFO',
+                                f'Safe version detected: {package_name}@{version} (compromised: {", ".join(compromised_versions)})',
+                                file_path,
+                                {
+                                    'package': package_name,
+                                    'safe_version': version,
+                                    'compromised_versions': compromised_versions,
+                                    'dependency_type': dep_type
+                                }
+                            )
+                            self.dependency_stats['safe_packages_found'] += 1
                                 
         except (json.JSONDecodeError, FileNotFoundError) as e:
             self.log_finding('ERROR', f'Failed to parse {file_path}: {str(e)}', file_path)
@@ -1610,19 +1631,115 @@ github_token = your_github_token_here
                         display_path = file_path
                 report_lines.append(f"{i:2d}. {display_path}")
                 
-        # Repository information
-        unique_repos = set()
-        for finding in self.findings:
-            repo_url = finding.get('repo_url')
-            if repo_url and repo_url != 'unknown':
-                unique_repos.add(repo_url)
+        # Repository information - Enhanced with clone/found details
+        report_lines.append("")
+        report_lines.append("REPOSITORY PROCESSING DETAILS:")
+        report_lines.append("-" * 30)
         
-        if unique_repos:
+        # Show cloned repositories
+        if self.cloned_repositories:
+            report_lines.append("CLONED REPOSITORIES:")
+            for i, repo in enumerate(self.cloned_repositories, 1):
+                report_lines.append(f"{i:2d}. {repo['name']}")
+                report_lines.append(f"    URL: {repo['url']}")
+                report_lines.append(f"    Local path: {repo['local_path']}")
+                report_lines.append(f"    Source: {repo['source']}")
+                report_lines.append("")
+        
+        # Show found repositories
+        if self.found_repositories:
+            report_lines.append("FOUND EXISTING REPOSITORIES:")
+            for i, repo in enumerate(self.found_repositories, 1):
+                report_lines.append(f"{i:2d}. {repo['name']}")
+                report_lines.append(f"    URL: {repo['url']}")
+                report_lines.append(f"    Local path: {repo['local_path']}")
+                report_lines.append(f"    Source: {repo['source']}")
+                report_lines.append("")
+        
+        # Library analysis summary
+        if self.all_scanned_libraries:
             report_lines.append("")
-            report_lines.append("REPOSITORIES SCANNED:")
-            report_lines.append("-" * 20)
-            for i, repo_url in enumerate(sorted(unique_repos), 1):
-                report_lines.append(f"{i:2d}. {repo_url}")
+            report_lines.append("LIBRARY ANALYSIS SUMMARY:")
+            report_lines.append("-" * 25)
+            report_lines.append(f"Total libraries scanned: {len(self.all_scanned_libraries)}")
+            report_lines.append(f"Clean libraries: {len(self.clean_libraries)}")
+            report_lines.append(f"Compromised libraries: {len(self.compromised_libraries)}")
+            
+            # Show clean libraries
+            if self.clean_libraries:
+                report_lines.append("")
+                report_lines.append("CLEAN LIBRARIES FOUND:")
+                report_lines.append("-" * 20)
+                for i, lib in enumerate(self.clean_libraries[:20], 1):  # Show first 20
+                    report_lines.append(f"{i:2d}. {lib['name']}@{lib['version']} ({lib['type']})")
+                    
+                    # Add repository and file information
+                    file_path = lib.get('file', 'unknown')
+                    
+                    # Extract repository URL from findings or try to determine from file path
+                    repo_url = None
+                    for finding in self.findings:
+                        if finding.get('file') == file_path:
+                            repo_url = finding.get('repo_url')
+                            break
+                    
+                    if not repo_url:
+                        repo_url = self.get_repo_url_from_path(file_path)
+                    
+                    # Show file path (relative if possible)
+                    display_path = file_path
+                    if os.path.isabs(file_path):
+                        try:
+                            display_path = os.path.relpath(file_path)
+                        except:
+                            display_path = file_path
+                    
+                    report_lines.append(f"    📁 Build file: {display_path}")
+                    if repo_url and repo_url != 'unknown':
+                        report_lines.append(f"    🔗 Repository: {repo_url}")
+                    report_lines.append(f"    📍 Local path: {file_path}")
+                    report_lines.append("")
+                    
+                if len(self.clean_libraries) > 20:
+                    report_lines.append(f"    ... and {len(self.clean_libraries) - 20} more clean libraries")
+                    report_lines.append("")
+                    
+            # Show compromised libraries
+            if self.compromised_libraries:
+                report_lines.append("")
+                report_lines.append("COMPROMISED LIBRARIES FOUND:")
+                report_lines.append("-" * 25)
+                for i, lib in enumerate(self.compromised_libraries, 1):
+                    report_lines.append(f"{i:2d}. {lib['name']}@{lib['version']} ({lib['type']}) - {lib.get('severity', 'UNKNOWN')}")
+                    
+                    # Add repository and file information
+                    file_path = lib.get('file', 'unknown')
+                    
+                    # Extract repository URL from findings or try to determine from file path
+                    repo_url = None
+                    for finding in self.findings:
+                        if finding.get('file') == file_path:
+                            repo_url = finding.get('repo_url')
+                            break
+                    
+                    if not repo_url:
+                        repo_url = self.get_repo_url_from_path(file_path)
+                    
+                    # Show file path (relative if possible)
+                    display_path = file_path
+                    if os.path.isabs(file_path):
+                        try:
+                            display_path = os.path.relpath(file_path)
+                        except:
+                            display_path = file_path
+                    
+                    report_lines.append(f"    📁 Build file: {display_path}")
+                    if repo_url and repo_url != 'unknown':
+                        report_lines.append(f"    🔗 Repository: {repo_url}")
+                    report_lines.append(f"    📍 Local path: {file_path}")
+                    if 'compromised_versions' in lib:
+                        report_lines.append(f"    ⚠️  Compromised versions: {', '.join(lib['compromised_versions'])}")
+                    report_lines.append("")
             
         report_lines.append("")
         
