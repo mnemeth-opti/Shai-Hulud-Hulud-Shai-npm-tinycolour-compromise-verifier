@@ -45,6 +45,8 @@ class EnhancedNPMCompromiseDetectorPhoenix:
         self.phoenix_assets = []  # Assets to be imported to Phoenix
         self.phoenix_findings = []  # Findings to be imported to Phoenix
         self.debug_mode = False  # Debug mode flag
+        self.delete_local_files = False  # Delete cloned repositories after scan
+        self.detail_log = False  # Show all libraries without truncation
         
         # Enhanced tracking for comprehensive reporting
         self.cloned_repositories = []  # Track repositories that were cloned
@@ -570,6 +572,32 @@ github_token = your_github_token_here
             
         except Exception as e:
             print(f"⚠️  Warning: Could not save debug response: {str(e)}")
+    
+    def cleanup_cloned_repositories(self):
+        """Clean up cloned repositories if delete_local_files is enabled"""
+        if not self.delete_local_files:
+            return
+            
+        if not self.cloned_repositories:
+            print("🗑️  No cloned repositories to clean up")
+            return
+            
+        print(f"🗑️  Cleaning up {len(self.cloned_repositories)} cloned repositories...")
+        
+        for repo in self.cloned_repositories:
+            repo_path = repo['local_path']
+            repo_name = repo['name']
+            
+            try:
+                if os.path.exists(repo_path) and os.path.isdir(repo_path):
+                    shutil.rmtree(repo_path)
+                    print(f"   ✅ Deleted: {repo_name} ({repo_path})")
+                else:
+                    print(f"   ⚠️  Not found: {repo_name} ({repo_path})")
+            except Exception as e:
+                print(f"   ❌ Failed to delete {repo_name}: {str(e)}")
+                
+        print(f"🗑️  Cleanup complete!")
 
     def load_compromise_data(self):
         """Load compromised package data from JSON configuration"""
@@ -669,6 +697,18 @@ github_token = your_github_token_here
             debug_dir = "debug"
             os.makedirs(debug_dir, exist_ok=True)
             print(f"🐛 Debug mode enabled: Phoenix API payloads and responses will be saved to '{debug_dir}/' directory")
+    
+    def enable_delete_local_files(self, enable: bool = True):
+        """Enable or disable deletion of cloned repositories after scan"""
+        self.delete_local_files = enable
+        if enable:
+            print(f"🗑️  Delete local files enabled: Cloned repositories will be removed after scanning")
+    
+    def enable_detail_log(self, enable: bool = True):
+        """Enable or disable detailed logging (show all libraries without truncation)"""
+        self.detail_log = enable
+        if enable:
+            print(f"📋 Detail log enabled: All libraries will be shown in the report")
         
     def get_repo_url_from_path(self, file_path: str) -> Optional[str]:
         """Extract repository URL from local file path"""
@@ -1670,7 +1710,11 @@ github_token = your_github_token_here
                 report_lines.append("")
                 report_lines.append("CLEAN LIBRARIES FOUND:")
                 report_lines.append("-" * 20)
-                for i, lib in enumerate(self.clean_libraries[:20], 1):  # Show first 20
+                
+                # Determine how many libraries to show
+                libraries_to_show = self.clean_libraries if self.detail_log else self.clean_libraries[:20]
+                
+                for i, lib in enumerate(libraries_to_show, 1):
                     report_lines.append(f"{i:2d}. {lib['name']}@{lib['version']} ({lib['type']})")
                     
                     # Add repository and file information
@@ -1700,8 +1744,10 @@ github_token = your_github_token_here
                     report_lines.append(f"    📍 Local path: {file_path}")
                     report_lines.append("")
                     
-                if len(self.clean_libraries) > 20:
+                # Show truncation message only if not in detail log mode
+                if not self.detail_log and len(self.clean_libraries) > 20:
                     report_lines.append(f"    ... and {len(self.clean_libraries) - 20} more clean libraries")
+                    report_lines.append(f"    💡 Use --detail-log to see all {len(self.clean_libraries)} libraries")
                     report_lines.append("")
                     
             # Show compromised libraries
@@ -1921,6 +1967,10 @@ def main():
                        help='Organize GitHub pulls in github-pull/YYYYMMDD and results in result/YYYYMMDD')
     parser.add_argument('--debug', action='store_true',
                        help='Enable debug mode: save Phoenix API payloads and responses to debug files')
+    parser.add_argument('--delete-local-files', action='store_true',
+                       help='Delete cloned repositories after scanning (cleanup mode)')
+    parser.add_argument('--detail-log', action='store_true',
+                       help='Show all libraries in the report without truncation (detailed logging)')
     
     args = parser.parse_args()
     
@@ -1963,6 +2013,12 @@ def main():
         
     if args.debug:
         detector.enable_debug_mode(True)
+        
+    if args.delete_local_files:
+        detector.enable_delete_local_files(True)
+        
+    if args.detail_log:
+        detector.enable_detail_log(True)
     
     print(f"📁 Target: {os.path.abspath(args.target)}")
     print()
@@ -2032,6 +2088,9 @@ def main():
                         
             if not critical_findings and not high_findings:
                 print("✅ No critical or high priority findings detected")
+    
+    # Cleanup cloned repositories if requested
+    detector.cleanup_cloned_repositories()
     
     # Exit with error code if critical or high findings
     critical_count = len([f for f in detector.findings if f['severity'] in ['CRITICAL', 'HIGH']])
