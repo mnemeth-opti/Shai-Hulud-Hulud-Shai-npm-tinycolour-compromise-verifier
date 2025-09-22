@@ -47,6 +47,7 @@ class EnhancedNPMCompromiseDetectorPhoenix:
         self.debug_mode = False  # Debug mode flag
         self.delete_local_files = False  # Delete cloned repositories after scan
         self.detail_log = False  # Show all libraries without truncation
+        self.use_tmp = False  # Use /tmp for cloning (legacy mode)
         
         # Enhanced tracking for comprehensive reporting
         self.cloned_repositories = []  # Track repositories that were cloned
@@ -709,6 +710,12 @@ github_token = your_github_token_here
         self.detail_log = enable
         if enable:
             print(f"📋 Detail log enabled: All libraries will be shown in the report")
+    
+    def enable_tmp_mode(self, enable: bool = True):
+        """Enable or disable /tmp usage for cloning (legacy mode)"""
+        self.use_tmp = enable
+        if enable:
+            print(f"📁 Legacy /tmp mode enabled: Repositories will be cloned to /tmp/")
         
     def get_repo_url_from_path(self, file_path: str) -> Optional[str]:
         """Extract repository URL from local file path"""
@@ -1572,13 +1579,16 @@ github_token = your_github_token_here
                 return organized_path
         
         # Check if repository exists locally in other locations
-        # By default, prioritize organized structure and avoid /tmp
+        # Include /tmp only if legacy tmp mode is enabled
         possible_paths = [
             f"./repos/{repo_name}",
             f"../{repo_name}",
             f"../../{repo_name}"
-            # /tmp is no longer checked by default - use organized structure instead
         ]
+        
+        # Add /tmp to search paths only if legacy mode is enabled
+        if self.use_tmp:
+            possible_paths.append(f"/tmp/{repo_name}")
         
         for path in possible_paths:
             if os.path.exists(path) and os.path.isdir(path):
@@ -1592,10 +1602,14 @@ github_token = your_github_token_here
                 })
                 return path
                 
-        # Determine clone path - use organized structure by default
-        # Always use organized github-pull folder structure for better organization
-        clone_path = os.path.join(self.github_pull_dir, repo_name)
-        os.makedirs(os.path.dirname(clone_path), exist_ok=True)
+        # Determine clone path based on mode
+        if self.use_tmp:
+            # Legacy mode: use /tmp
+            clone_path = f"/tmp/{repo_name}"
+        else:
+            # Default: use organized github-pull folder structure
+            clone_path = os.path.join(self.github_pull_dir, repo_name)
+            os.makedirs(os.path.dirname(clone_path), exist_ok=True)
             
         try:
             print(f"📥 Cloning repository to {clone_path}")
@@ -1968,6 +1982,8 @@ def main():
                        help='Delete cloned repositories after scanning (cleanup mode)')
     parser.add_argument('--detail-log', action='store_true',
                        help='Show all libraries in the report without truncation (detailed logging)')
+    parser.add_argument('--use-tmp', action='store_true',
+                       help='Use /tmp for repository cloning (legacy mode, not recommended)')
     
     args = parser.parse_args()
     
@@ -2016,6 +2032,12 @@ def main():
         
     if args.detail_log:
         detector.enable_detail_log(True)
+        
+    if args.use_tmp:
+        detector.enable_tmp_mode(True)
+    else:
+        # Default behavior: use organized folders for better organization
+        detector.enable_folder_organization(True)
     
     print(f"📁 Target: {os.path.abspath(args.target)}")
     print()
