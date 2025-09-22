@@ -58,7 +58,7 @@ class EnhancedNPMCompromiseDetectorPhoenix:
         self.full_tree_analysis = False
         self.enable_phoenix_import = False
         self.light_scan_mode = False
-        self.github_token = os.getenv('GITHUB_TOKEN')  # Optional GitHub token for higher rate limits
+        self.github_token = None  # Will be loaded from config or environment
         self.use_embedded_credentials = False
         
         # Folder organization for GitHub pulls and results
@@ -77,8 +77,9 @@ class EnhancedNPMCompromiseDetectorPhoenix:
             'import_type': 'new'
         }
         
-        # Load Phoenix configuration after initializing all attributes
+        # Load Phoenix configuration and GitHub token after initializing all attributes
         self.phoenix_config = self.load_phoenix_config()
+        self.load_github_token()
         
     def load_phoenix_config(self) -> Dict:
         """Load Phoenix API configuration from embedded credentials, environment variables, or .config file"""
@@ -136,6 +137,39 @@ class EnhancedNPMCompromiseDetectorPhoenix:
             print(f"⚠️  Phoenix configuration file {self.phoenix_config_file} not found")
             
         return config
+    
+    def load_github_token(self):
+        """Load GitHub token from environment variable or config file"""
+        # Priority 1: Environment variable
+        env_token = os.getenv('GITHUB_TOKEN')
+        if env_token:
+            self.github_token = env_token
+            print("🔗 Using GitHub token from environment variable")
+            return
+        
+        # Priority 2: Config file
+        if os.path.exists(self.phoenix_config_file):
+            try:
+                parser = configparser.ConfigParser()
+                parser.read(self.phoenix_config_file)
+                
+                if 'phoenix' in parser:
+                    phoenix_section = parser['phoenix']
+                    # Check for various possible key names
+                    github_token = (phoenix_section.get('github_token') or 
+                                  phoenix_section.get('Github_token') or 
+                                  phoenix_section.get('GITHUB_TOKEN'))
+                    
+                    if github_token and github_token.strip():
+                        self.github_token = github_token.strip()
+                        print(f"🔗 Using GitHub token from {self.phoenix_config_file}")
+                        return
+                        
+            except Exception as e:
+                print(f"⚠️  Error loading GitHub token from config: {str(e)}")
+        
+        # No token found
+        print("💡 No GitHub token found - API rate limits may apply for light scan mode")
         
     def create_config_template(self, output_path: str = ".config.example"):
         """Create a template configuration file for Phoenix API"""
@@ -146,6 +180,9 @@ client_secret = your_client_secret_here
 api_base_url = https://api.securityphoenix.cloud
 assessment_name = NPM Compromise Detection - Shai Halud
 import_type = new
+
+# GitHub token for enhanced API rate limits (optional but recommended)
+github_token = your_github_token_here
 
 # Optional settings
 # For demo environment, use: https://api.demo.appsecphx.io
@@ -222,11 +259,39 @@ import_type = new
         
     def create_phoenix_asset(self, file_path: str, repo_url: str) -> Dict:
         """Create a Phoenix asset for a package file"""
+        
+        # Create full GitHub path for the asset if we have a repo URL
+        if repo_url and "github.com" in repo_url:
+            # Clean up repo URL and fix the repository name format
+            clean_repo_url = repo_url.replace('.git', '')
+            
+            # Fix the repository URL to match the actual GitHub structure
+            if 'Shai-Hulud-npm-tinycolour-compromise-verifier' in clean_repo_url:
+                clean_repo_url = clean_repo_url.replace('Shai-Hulud-npm-tinycolour-compromise-verifier', 'Shai-Hulud-Hulud-Shai-npm-tinycolour-compromise-verifier')
+            
+            # Extract relative path for GitHub URL construction
+            relative_path = file_path
+            if os.path.isabs(file_path):
+                # Try to extract relative path
+                path_parts = file_path.split(os.sep)
+                relative_path = os.path.basename(file_path)
+                
+                # Look for meaningful directory structure
+                for i, part in enumerate(path_parts):
+                    if part.startswith('test') or 'package' in part.lower():
+                        if i < len(path_parts):
+                            relative_path = '/'.join(path_parts[i:])
+                            break
+            
+            # Construct full GitHub URL with /tree/main/ structure for Phoenix
+            full_github_path = f"{clean_repo_url}/tree/main/{relative_path}"
+        else:
+            full_github_path = file_path
             
         asset = {
             "attributes": {
                 "repository": repo_url or "unknown",
-                "buildFile": file_path,
+                "buildFile": full_github_path,  # Use full GitHub path
                 "origin": "github" if "github.com" in (repo_url or "") else "unknown"
             },
             "tags": [
@@ -243,7 +308,7 @@ import_type = new
         
     def create_phoenix_finding(self, package_name: str, version: str, severity: str, 
                              compromised_versions: List[str], is_safe: bool, 
-                             file_path: str, dependency_type: str = "dependencies") -> Dict:
+                             file_path: str, repo_url: str = None, dependency_type: str = "dependencies") -> Dict:
         """Create a Phoenix finding for a package"""
         
         # Map severity to Phoenix risk scale (1.0 - 10.0)
@@ -255,16 +320,35 @@ import_type = new
         
         risk_score = risk_mapping.get(severity, "5.0")
         
-        # Create finding description
+        # Create finding description with repository and file information
+        repo_info = ""
+        if repo_url:
+            repo_info = f"Repo: {repo_url}, "
+        
+        # Extract just the filename/relative path for file info
+        if os.path.isabs(file_path):
+            # Try to get relative path from repository root
+            path_parts = file_path.split(os.sep)
+            file_info = os.path.basename(file_path)  # Default to just filename
+            
+            # Look for test directories or other meaningful parts
+            for i, part in enumerate(path_parts):
+                if part.startswith('test') or 'package' in part.lower():
+                    if i < len(path_parts) - 1:
+                        file_info = '/'.join(path_parts[i:])
+                        break
+        else:
+            file_info = file_path
+            
         if is_safe:
-            description = f"Safe version detected: {package_name}@{version}"
+            description = f"{repo_info}File: {file_info} - Safe version detected: {package_name}@{version}"
             if compromised_versions:
                 description += f" (compromised versions: {', '.join(compromised_versions)})"
         else:
             if severity == 'CRITICAL':
-                description = f"Compromised package detected: {package_name}@{version}"
+                description = f"{repo_info}File: {file_info} - Compromised package detected: {package_name}@{version}"
             else:
-                description = f"Potentially compromised package detected: {package_name}@{version}"
+                description = f"{repo_info}File: {file_info} - Potentially compromised package detected: {package_name}@{version}"
                 
         # Create remedy recommendation
         if is_safe:
@@ -674,7 +758,7 @@ import_type = new
         """Process a single package file and create Phoenix asset with findings"""
         # Extract repository URL if not provided
         if not repo_url:
-            repo_url = self.extract_repository_url(file_path)
+            repo_url = self.get_repo_url_from_path(file_path)
             
         # Create Phoenix asset
         asset = self.create_phoenix_asset(file_path, repo_url)
@@ -707,10 +791,40 @@ import_type = new
             # Create Phoenix finding
             phoenix_finding = self.create_phoenix_finding(
                 package_name, version, severity or 'INFO', 
-                compromised_versions, is_safe, file_path, dep_type
+                compromised_versions, is_safe, file_path, repo_url, dep_type
             )
             
             asset['findings'].append(phoenix_finding)
+            
+            # Add to findings list for reporting (with repo and file info)
+            if is_compromised or is_safe:
+                # Create unique identifier to prevent duplicates
+                finding_id = f"{package_name}@{version}:{file_path}:{dep_type}"
+                
+                # Check if we already have this finding
+                existing_finding = any(
+                    f.get('details', {}).get('package') == package_name and
+                    f.get('details', {}).get('version') == version and
+                    f.get('file') == file_path and
+                    f.get('details', {}).get('dependency_type') == dep_type
+                    for f in self.findings
+                )
+                
+                if not existing_finding:
+                    report_finding = {
+                        'severity': severity or 'INFO',
+                        'message': f"Safe version detected: {package_name}@{version}" if is_safe else f"Compromised package detected: {package_name}@{version}",
+                        'file': file_path,
+                        'repo_url': repo_url,
+                        'details': {
+                            'package': package_name,
+                            'version': version if not is_safe else None,
+                            'safe_version': version if is_safe else None,
+                            'dependency_type': dep_type,
+                            'compromised_versions': compromised_versions
+                        }
+                    }
+                    self.findings.append(report_finding)
             
         # Add installed software information
         # TODO - Review this. installedSoftware is for OS packages and apps
@@ -1379,23 +1493,88 @@ import_type = new
                 report_lines.append(f"{severity}: {severity_counts[severity]}")
         report_lines.append("")
         
-        # Detailed findings
+        # Detailed findings grouped by repository and build file
         if self.findings:
             report_lines.append("DETAILED FINDINGS:")
             report_lines.append("-" * 20)
             
-            for i, finding in enumerate(self.findings, 1):
-                report_lines.append(f"{i}. [{finding['severity']}] {finding['message']}")
-                if finding['file']:
-                    report_lines.append(f"   📁 Location: {finding['file']}")
-                if finding['details']:
-                    for key, value in finding['details'].items():
-                        if key == 'compromised_versions' and value:
-                            report_lines.append(f"   ⚠️  Compromised versions: {', '.join(value)}")
-                        elif key in ['package', 'version', 'safe_version']:
-                            report_lines.append(f"   {key}: {value}")
-                        elif key == 'dependency_type':
-                            report_lines.append(f"   📦 Type: {value}")
+            # Group findings by repository and file
+            grouped_findings = {}
+            for finding in self.findings:
+                repo_url = finding.get('repo_url', 'unknown')
+                file_path = finding.get('file', 'unknown')
+                
+                # Create full GitHub URLs for grouping
+                if repo_url and repo_url != 'unknown' and 'github.com' in repo_url:
+                    # Clean up repo URL and fix the repository name format
+                    clean_repo_url = repo_url.replace('.git', '')
+                    
+                    # Fix the repository URL to match the actual GitHub structure
+                    if 'Shai-Hulud-npm-tinycolour-compromise-verifier' in clean_repo_url:
+                        clean_repo_url = clean_repo_url.replace('Shai-Hulud-npm-tinycolour-compromise-verifier', 'Shai-Hulud-Hulud-Shai-npm-tinycolour-compromise-verifier')
+                    
+                    # Extract relative path for file URL
+                    if os.path.isabs(file_path):
+                        # Try to extract relative path
+                        path_parts = file_path.split(os.sep)
+                        relative_path = os.path.basename(file_path)
+                        
+                        # Look for meaningful directory structure
+                        for i, part in enumerate(path_parts):
+                            if part.startswith('test') or 'package' in part.lower():
+                                if i < len(path_parts):
+                                    relative_path = '/'.join(path_parts[i:])
+                                    break
+                    else:
+                        relative_path = file_path
+                    
+                    # Create directory and file URLs
+                    if relative_path.endswith('.json'):
+                        # For files, create directory URL and file URL
+                        dir_path = '/'.join(relative_path.split('/')[:-1]) if '/' in relative_path else ''
+                        repo_dir_url = f"{clean_repo_url}/tree/main/{dir_path}/" if dir_path else f"{clean_repo_url}/tree/main/"
+                        file_url = f"{clean_repo_url}/tree/main/{relative_path}"
+                    else:
+                        # For directories
+                        repo_dir_url = f"{clean_repo_url}/tree/main/{relative_path}/"
+                        file_url = f"{clean_repo_url}/tree/main/{relative_path}/"
+                    
+                    # Group key
+                    group_key = (repo_dir_url, file_url, relative_path)
+                else:
+                    # Fallback for non-GitHub URLs
+                    group_key = (repo_url, file_path, file_path)
+                
+                if group_key not in grouped_findings:
+                    grouped_findings[group_key] = []
+                grouped_findings[group_key].append(finding)
+            
+            # Generate grouped report
+            finding_counter = 1
+            for (repo_dir_url, file_url, relative_path), group_findings in grouped_findings.items():
+                # Repository header
+                report_lines.append(f"Repository: {repo_dir_url}")
+                report_lines.append(f"File: {file_url}")
+                report_lines.append("")
+                
+                # Findings for this repo/file combination
+                for finding in group_findings:
+                    report_lines.append(f"{finding_counter}. [{finding['severity']}] {finding['message']}")
+                    report_lines.append(f"   📁 Location: {relative_path}")
+                    
+                    if finding['details']:
+                        for key, value in finding['details'].items():
+                            if key == 'compromised_versions' and value:
+                                report_lines.append(f"   ⚠️  Compromised versions: {', '.join(value)}")
+                            elif key in ['package', 'version', 'safe_version'] and value:
+                                report_lines.append(f"   {key}: {value}")
+                            elif key == 'dependency_type':
+                                report_lines.append(f"   📦 Type: {value}")
+                    
+                    report_lines.append("")
+                    finding_counter += 1
+                
+                report_lines.append("-" * 40)
                 report_lines.append("")
         else:
             report_lines.append("✅ No compromised packages detected!")

@@ -11,12 +11,16 @@ api_base_url = https://your-phoenix-domain.com/api
 assessment_name = NPM Compromise Detection - Shai Halud
 import_type = new
 
+# GitHub token for enhanced API rate limits (optional but recommended for light scan mode)
+github_token = your_github_token_here
+
 # SETUP INSTRUCTIONS:
 # 1. Replace 'your_phoenix_client_id_here' with your actual client ID from Phoenix Security
 # 2. Replace 'your_phoenix_client_secret_here' with your actual client secret from Phoenix Security
 # 3. Replace 'your-phoenix-domain.com/api' with your Phoenix Security API endpoint
-# 4. Rename this file to '.config' (remove .example extension)
-# 5. Test connection: python3 enhanced_npm_compromise_detector_phoenix.py --create-config
+# 4. (Optional) Replace 'your_github_token_here' with your GitHub Personal Access Token for higher API rate limits
+# 5. Rename this file to '.config' (remove .example extension)
+# 6. Test connection: python3 enhanced_npm_compromise_detector_phoenix.py --create-config
 
 # Example API endpoints (replace with your actual domain):
 # For demo environment: https://api.demo.your-phoenix-domain.com
