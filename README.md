@@ -159,7 +159,88 @@ cp .config.example .config
 |--------------|------------|-------------|
 | **Compromised Package** | 10.0 (Critical) | Known compromised version detected |
 | **Potentially Compromised** | 8.0 (High) | Package name in compromise list |
-| **Safe Version** | 3.0 (Info) | Safe version of monitored package |
+| **Safe Version** | 1.0 (Info) | Safe version of monitored package |
+| **Clean Library** | 1.0 (Info) | Clean library not affected by Shai Halud |
+
+### **🆕 Import All Libraries (`--import-all`)**
+
+By default, Phoenix findings are only created for compromised or monitored packages. Use `--import-all` to create findings for **ALL** libraries including clean ones:
+
+```bash
+# Import all libraries including clean ones (creates CVSS 1.0 findings)
+python3 enhanced_npm_compromise_detector_phoenix.py . --enable-phoenix --import-all
+
+# Complete security posture with all libraries
+python3 enhanced_npm_compromise_detector_phoenix.py \
+  --repo-list repos.txt \
+  --light-scan \
+  --enable-phoenix \
+  --import-all \
+  --output complete-posture.txt
+```
+
+**Benefits of `--import-all`:**
+- ✅ **Complete Asset Inventory**: Every library gets a Phoenix finding
+- ✅ **Security Posture Visibility**: See all dependencies, not just compromised ones  
+- ✅ **Compliance Ready**: Full library documentation for audits
+- ✅ **Clean Library Tracking**: Track "Library XYZ version Z is not affected by Shai Halud"
+
+**Clean Library Finding Example:**
+- **Name**: "NPM Package Security: express"
+- **Description**: "Library express version 4.18.2 is not affected by Shai Halud"
+- **Risk Score**: 1.0 (CVSS 1)
+- **Tag**: "shai-hulud-clean-library"
+
+### **🏷️ Custom Tags Configuration**
+
+Add custom tags to Phoenix findings and assets for better organization:
+
+#### **Command Line Tags:**
+```bash
+# Add custom vulnerability tags
+python3 enhanced_npm_compromise_detector_phoenix.py . \
+  --enable-phoenix \
+  --tag_vuln="security-audit,compliance-scan,Q4-2025"
+
+# Add custom asset tags  
+python3 enhanced_npm_compromise_detector_phoenix.py . \
+  --enable-phoenix \
+  --tag_asset="frontend-project,production-ready,team-alpha"
+
+# Combine both tag types
+python3 enhanced_npm_compromise_detector_phoenix.py . \
+  --enable-phoenix \
+  --import-all \
+  --tag_vuln="security-audit,shai-halud-scan" \
+  --tag_asset="npm-project,dependency-inventory" \
+  --output tagged-security-scan.txt
+```
+
+#### **Configuration File Tags:**
+Add tags to your `.config` file for consistent tagging:
+
+```ini
+[phoenix]
+client_id = your_phoenix_client_id_here
+client_secret = your_phoenix_client_secret_here
+api_base_url = https://api.securityphoenix.cloud
+assessment_name = NPM Compromise Detection - Shai Halud
+import_type = new
+
+# Additional tags for findings and assets (comma-separated)
+additional_vuln_tags = custom-scan,security-audit,Q4-2025
+additional_asset_tags = npm-project,dependency-scan,team-alpha
+
+# GitHub token for enhanced API rate limits
+github_token = your_github_token_here
+```
+
+**Tag Use Cases:**
+- **Team Organization**: `team-frontend,team-backend,team-mobile`
+- **Environment Tracking**: `production,staging,development`
+- **Compliance**: `sox-compliance,gdpr-audit,security-review`
+- **Time-based**: `Q1-2025,monthly-scan,pre-deployment`
+- **Project Classification**: `critical-app,internal-tool,public-facing`
 
 ### **Repository URL Detection**
 
@@ -722,8 +803,11 @@ python3 enhanced_npm_compromise_detector_phoenix.py . --full-tree --detail-log -
 # Enterprise repository batch scan with cleanup
 python3 enhanced_npm_compromise_detector_phoenix.py --repo-list enterprise_repos.txt --light-scan --organize-folders --delete-local-files --enable-phoenix
 
-# Complete audit with all features
-python3 enhanced_npm_compromise_detector_phoenix.py --repo-list repos.txt --light-scan --organize-folders --delete-local-files --detail-log --enable-phoenix --output complete-audit.txt
+# Complete audit with all features including clean libraries
+python3 enhanced_npm_compromise_detector_phoenix.py --repo-list repos.txt --light-scan --organize-folders --delete-local-files --detail-log --enable-phoenix --import-all --output complete-audit.txt
+
+# Enterprise scan with custom tags
+python3 enhanced_npm_compromise_detector_phoenix.py --repo-list repos.txt --enable-phoenix --import-all --tag_vuln="Q4-audit,compliance" --tag_asset="production,critical" --output enterprise-scan.txt
 ```
 
 ### **📊 Exit Code Reference**

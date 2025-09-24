@@ -68,9 +68,14 @@ class EnhancedNPMCompromiseDetectorPhoenix:
         }
         self.full_tree_analysis = False
         self.enable_phoenix_import = False
+        self.import_all_libraries = False  # Import all libraries including clean ones
         self.light_scan_mode = False
         self.github_token = None  # Will be loaded from config or environment
         self.use_embedded_credentials = False
+        
+        # Tag configuration
+        self.additional_vuln_tags = []  # Additional tags for vulnerability findings
+        self.additional_asset_tags = []  # Additional tags for asset findings
         
         # Folder organization for GitHub pulls and results
         self.timestamp = datetime.now().strftime('%Y%m%d')
@@ -91,6 +96,7 @@ class EnhancedNPMCompromiseDetectorPhoenix:
         # Load Phoenix configuration and GitHub token after initializing all attributes
         self.phoenix_config = self.load_phoenix_config()
         self.load_github_token()
+        self.load_tag_config()
         
     def load_phoenix_config(self) -> Dict:
         """Load Phoenix API configuration from embedded credentials, environment variables, or .config file"""
@@ -182,6 +188,36 @@ class EnhancedNPMCompromiseDetectorPhoenix:
         # No token found
         print("💡 No GitHub token found - API rate limits may apply for light scan mode")
         
+    def load_tag_config(self):
+        """Load additional tag configuration from config file"""
+        if not os.path.exists(self.phoenix_config_file):
+            return
+            
+        try:
+            parser = configparser.ConfigParser()
+            parser.read(self.phoenix_config_file)
+            
+            if 'phoenix' in parser:
+                phoenix_section = parser['phoenix']
+                
+                # Load vulnerability tags
+                vuln_tags = phoenix_section.get('additional_vuln_tags', '')
+                if vuln_tags:
+                    self.additional_vuln_tags = [tag.strip() for tag in vuln_tags.split(',') if tag.strip()]
+                    
+                # Load asset tags  
+                asset_tags = phoenix_section.get('additional_asset_tags', '')
+                if asset_tags:
+                    self.additional_asset_tags = [tag.strip() for tag in asset_tags.split(',') if tag.strip()]
+                    
+                if self.additional_vuln_tags:
+                    print(f"🏷️  Loaded additional vulnerability tags: {', '.join(self.additional_vuln_tags)}")
+                if self.additional_asset_tags:
+                    print(f"🏷️  Loaded additional asset tags: {', '.join(self.additional_asset_tags)}")
+                    
+        except Exception as e:
+            print(f"⚠️  Error loading tag configuration: {str(e)}")
+        
     def create_config_template(self, output_path: str = ".config.example"):
         """Create a template configuration file for Phoenix API"""
         template_content = """[phoenix]
@@ -194,6 +230,12 @@ import_type = new
 
 # GitHub token for enhanced API rate limits (optional but recommended)
 github_token = your_github_token_here
+
+# Additional tags for findings and assets (comma-separated)
+# These tags will be added to vulnerability findings
+additional_vuln_tags = custom-scan,security-audit
+# These tags will be added to asset findings  
+additional_asset_tags = npm-project,dependency-scan
 
 # Optional settings
 # For demo environment, use: https://api.demo.appsecphx.io
@@ -310,7 +352,7 @@ github_token = your_github_token_here
                 {"value": "supplychain"},
                 {"value": "npm-security"},
                 {"value": "compromise-detection"}
-            ],
+            ] + [{"value": tag} for tag in self.additional_asset_tags],
             "installedSoftware": [],
             "findings": []
         }
@@ -326,7 +368,8 @@ github_token = your_github_token_here
         risk_mapping = {
             'CRITICAL': "10.0",  # Compromised package
             'HIGH': "8.0",       # Potentially compromised
-            'INFO': "1.0"        # Safe version of monitored package
+            'INFO': "1.0",       # Safe version of monitored package
+            'CLEAN': "1.0"       # Clean library not affected by Shai Halud
         }
         
         risk_score = risk_mapping.get(severity, "5.0")
@@ -355,6 +398,8 @@ github_token = your_github_token_here
             description = f"{repo_info}File: {file_info} - Safe version detected: {package_name}@{version}"
             if compromised_versions:
                 description += f" (compromised versions: {', '.join(compromised_versions)})"
+        elif severity == 'CLEAN':
+            description = f"{repo_info}File: {file_info} - Library {package_name} version {version} is not affected by Shai Halud"
         else:
             if severity == 'CRITICAL':
                 description = f"{repo_info}File: {file_info} - Compromised package detected: {package_name}@{version}"
@@ -364,6 +409,8 @@ github_token = your_github_token_here
         # Create remedy recommendation
         if is_safe:
             remedy = f"Package {package_name}@{version} is using a safe version. Continue monitoring for updates."
+        elif severity == 'CLEAN':
+            remedy = f"Package {package_name}@{version} is clean and not affected by Shai Halud compromise. No action required, continue monitoring for future security advisories."
         else:
             if compromised_versions:
                 safe_versions = [v for v in compromised_versions if v not in compromised_versions]
@@ -386,16 +433,16 @@ github_token = your_github_token_here
             "tags": [
                 {"value": "Shai-hulud"},
                 {"value": "supplychain"},
-                {"value": "shai-hulud-compromised-package" if not is_safe else "shai-hulud-clean-library"},
+                {"value": "shai-hulud-compromised-package" if not is_safe and severity != 'CLEAN' else "shai-hulud-clean-library"},
                 {"value": "npm-security"},
                 {"value": "compromise-detection"}
-            ],
+            ] + [{"value": tag} for tag in self.additional_vuln_tags],
             "packages": [{"name": package_name, "version": version}],
             "details": {
                 "package_name": package_name,
                 "package_version": version,
                 "dependency_type": dependency_type,
-                "is_safe_version": is_safe,
+                "is_safe_version": is_safe or severity == 'CLEAN',
                 "compromised_versions": compromised_versions,
                 "scan_tool": "Shai Halud NPM Compromise Detector",
                 "scan_timestamp": datetime.now().isoformat()
@@ -716,6 +763,21 @@ github_token = your_github_token_here
         self.use_tmp = enable
         if enable:
             print(f"📁 Legacy /tmp mode enabled: Repositories will be cloned to /tmp/")
+            
+    def enable_import_all(self, enable: bool = True):
+        """Enable or disable importing all libraries including clean ones"""
+        self.import_all_libraries = enable
+        if enable:
+            print(f"📦 Import all libraries enabled: Clean libraries will get CVSS 1.0 findings")
+            
+    def set_additional_tags(self, vuln_tags: List[str] = None, asset_tags: List[str] = None):
+        """Set additional tags for vulnerabilities and assets"""
+        if vuln_tags:
+            self.additional_vuln_tags.extend(vuln_tags)
+            print(f"🏷️  Added vulnerability tags: {', '.join(vuln_tags)}")
+        if asset_tags:
+            self.additional_asset_tags.extend(asset_tags)
+            print(f"🏷️  Added asset tags: {', '.join(asset_tags)}")
         
     def get_repo_url_from_path(self, file_path: str) -> Optional[str]:
         """Extract repository URL from local file path"""
@@ -882,6 +944,32 @@ github_token = your_github_token_here
                             'safe_version': version if is_safe else None,
                             'dependency_type': dep_type,
                             'compromised_versions': compromised_versions
+                        }
+                    }
+                    self.findings.append(report_finding)
+                    
+        # Create findings for ALL clean libraries if --import-all is enabled
+        # This ensures every library gets a Phoenix finding, even if it's clean
+        if self.import_all_libraries:
+            for lib in self.clean_libraries:
+                if lib.get('file') == file_path:  # Only process libraries from this specific file
+                    phoenix_finding = self.create_phoenix_finding(
+                        lib['name'], lib['clean_version'], 'CLEAN', 
+                        [], False, file_path, repo_url, lib['type']
+                    )
+                    asset['findings'].append(phoenix_finding)
+                    
+                    # Add clean library to findings list for reporting
+                    report_finding = {
+                        'severity': 'CLEAN',
+                        'message': f"Library {lib['name']} version {lib['clean_version']} is not affected by Shai Halud",
+                        'file': file_path,
+                        'repo_url': repo_url,
+                        'details': {
+                            'package': lib['name'],
+                            'version': lib['clean_version'],
+                            'dependency_type': lib['type'],
+                            'compromised_versions': []
                         }
                     }
                     self.findings.append(report_finding)
@@ -1808,7 +1896,7 @@ github_token = your_github_token_here
             
         report_lines.append("SEVERITY SUMMARY:")
         report_lines.append("-" * 20)
-        for severity in ['CRITICAL', 'HIGH', 'MEDIUM', 'WARNING', 'ERROR', 'INFO']:
+        for severity in ['CRITICAL', 'HIGH', 'MEDIUM', 'WARNING', 'ERROR', 'INFO', 'CLEAN']:
             if severity in severity_counts:
                 report_lines.append(f"{severity}: {severity_counts[severity]}")
         report_lines.append("")
@@ -1985,6 +2073,16 @@ def main():
     parser.add_argument('--use-tmp', action='store_true',
                        help='Use /tmp for repository cloning (legacy mode, not recommended)')
     
+    # Import all libraries option
+    parser.add_argument('--import-all', action='store_true',
+                       help='Import all libraries to Phoenix including clean ones (creates CVSS 1.0 findings for clean libraries)')
+    
+    # Additional tag options
+    parser.add_argument('--tag_vuln', type=str,
+                       help='Additional tags for vulnerability findings (comma-separated)')
+    parser.add_argument('--tag_asset', type=str,
+                       help='Additional tags for asset findings (comma-separated)')
+    
     args = parser.parse_args()
     
     print("🔍 Enhanced NPM Package Compromise Detector with Phoenix Integration")
@@ -2038,6 +2136,22 @@ def main():
     else:
         # Default behavior: use organized folders for better organization
         detector.enable_folder_organization(True)
+        
+    if args.import_all:
+        detector.enable_import_all(True)
+        
+    # Handle additional tags
+    vuln_tags = []
+    asset_tags = []
+    
+    if args.tag_vuln:
+        vuln_tags = [tag.strip() for tag in args.tag_vuln.split(',') if tag.strip()]
+        
+    if args.tag_asset:
+        asset_tags = [tag.strip() for tag in args.tag_asset.split(',') if tag.strip()]
+        
+    if vuln_tags or asset_tags:
+        detector.set_additional_tags(vuln_tags, asset_tags)
     
     print(f"📁 Target: {os.path.abspath(args.target)}")
     print()
