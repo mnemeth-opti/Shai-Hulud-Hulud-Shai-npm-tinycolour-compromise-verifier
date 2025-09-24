@@ -55,3 +55,4 @@ test_temp_*
 *.rtf
 /__pycache__
 /github-pull
+.config.example
